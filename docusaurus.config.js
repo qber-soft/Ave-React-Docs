@@ -9,7 +9,7 @@
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-    title: 'Avernakis',
+    title: 'Avernakis React',
     tagline: '',
     url: 'https://qber-soft.github.io/',
     baseUrl: '/Ave-React-Docs/',
@@ -42,9 +42,9 @@ module.exports = {
             theme: require('prism-react-renderer/themes/vsDark'),
         },
         navbar: {
-            title: 'Avernakis',
+            title: 'Avernakis React',
             logo: {
-                alt: 'Avernakis',
+                alt: 'Avernakis React',
                 src: 'img/Ave.svg',
             },
             items: [
@@ -161,7 +161,7 @@ module.exports = {
             //   href: 'https://opensource.facebook.com',
             // },
             // Please do not remove the credits, help to publicize Docusaurus :)
-            copyright: `Copyright © ${new Date().getFullYear()} Avernakis`,
+            copyright: `Copyright © ${new Date().getFullYear()} Avernakis React`,
         },
     },
     presets: [

@@ -26,4 +26,4 @@ Of course we have dark theme!
 
 Currently, we only get a subset of it in JS, there is still much to do.
 
-Repo: [https://github.com/qber-soft/Ave-Nodejs](https://github.com/qber-soft/Ave-Nodejs)
+Repo: [https://github.com/qber-soft/Ave-React](https://github.com/qber-soft/Ave-React)

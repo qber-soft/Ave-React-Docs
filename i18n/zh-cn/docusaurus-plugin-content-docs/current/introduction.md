@@ -26,4 +26,4 @@ Avernakis 是用于创建桌面应用的 UI 库，SDK 本身是由 C++ 写成，
 
 目前只完成了部分 API 的封装。
 
-JS SDK 仓库位于：[https://github.com/qber-soft/Ave-Nodejs](https://github.com/qber-soft/Ave-Nodejs)
+JS SDK 仓库位于：[https://github.com/qber-soft/Ave-React](https://github.com/qber-soft/Ave-React)

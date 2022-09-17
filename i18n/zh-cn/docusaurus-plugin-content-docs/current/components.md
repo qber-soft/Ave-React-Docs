@@ -7,12 +7,14 @@ title: 组件总览
 
 <!-- TODO：这里一般放所有组件的图片和简介之类的，比如 https://ant.design/components/overview-cn/ -->
 
-## 简介
+## 简介 {#introduction}
 
-这部分文档以各种单独例子介绍组件的使用，代码位于：[examples/unit](https://github.com/qber-soft/Ave-Nodejs/tree/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit)。
+这部分文档以各种单独例子介绍组件的使用，代码位于：
+
+<!-- [examples/unit](https://github.com/qber-soft/Ave-Nodejs/tree/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit)。 -->
 
 ## 概览 {#overview}
-
+<!-- 
 ### 基础 {#fundamental}
 
 <div style={{display:"flex"}}>
@@ -160,4 +162,4 @@ title: 组件总览
         <img src={require('./assets/toggle-theme.gif').default} style={{width: 600}}/>
         <div style={{marginTop: 10}}>Theme 主题</div>
     </a>
-</div>
+</div> -->
