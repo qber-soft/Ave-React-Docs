@@ -12,7 +12,7 @@ module.exports = {
     title: 'Avernakis',
     tagline: '',
     url: 'https://qber-soft.github.io/',
-    baseUrl: '/Ave-Nodejs-Docs/',
+    baseUrl: '/Ave-React-Docs/',
     i18n: {
         defaultLocale: 'en',
         locales: ['en', 'zh-cn'],
@@ -32,7 +32,7 @@ module.exports = {
     projectName: 'ave-ui', // Usually your repo name.
     themeConfig: {
         gtag: {
-            trackingID: 'G-3FEEQ8VY7F',
+            trackingID: 'G-03WBSB2BDG',
             anonymizeIP: true,
         },
         colorMode: {
@@ -79,7 +79,7 @@ module.exports = {
                 },
                 // Please keep GitHub link to the right for consistency.
                 {
-                    href: 'https://github.com/qber-soft/Ave-Nodejs',
+                    href: 'https://github.com/qber-soft/Ave-React',
                     className: 'header-github-link',
                     'aria-label': 'GitHub repository',
                     position: 'right',

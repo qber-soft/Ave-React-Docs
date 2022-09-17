@@ -1,6 +1,6 @@
 # 简介
 
-这是[Avernakis UI](https://github.com/qber-soft/Ave-Nodejs)的文档站仓库，部署于：[https://qber-soft.github.io/Ave-Nodejs-Docs/](https://qber-soft.github.io/Ave-Nodejs-Docs/)
+这是[Avernakis React](https://github.com/qber-soft/Ave-React)的文档站仓库，部署于：[https://qber-soft.github.io/Ave-React-Docs/](https://qber-soft.github.io/Ave-React-Docs/)
 
 # 快速上手
 

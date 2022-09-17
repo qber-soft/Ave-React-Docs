@@ -1,8 +1,8 @@
 # Introduction
 
-This repo is the document of [Avernakis UI](https://github.com/qber-soft/Ave-Nodejs).
+This repo is the document of [Avernakis React](https://github.com/qber-soft/Ave-React).
 
-Link: [https://qber-soft.github.io/Ave-Nodejs-Docs/](https://qber-soft.github.io/Ave-Nodejs-Docs/)
+Link: [https://qber-soft.github.io/Ave-React-Docs/](https://qber-soft.github.io/Ave-React-Docs/)
 
 # Getting Started
 
