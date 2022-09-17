@@ -12,7 +12,7 @@
         "description": "Navbar item with label Components"
     },
     "title": {
-        "message": "Avernakis",
+        "message": "Avernakis React",
         "description": "The title in the navbar"
     }
 }

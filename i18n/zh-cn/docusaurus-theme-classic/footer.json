@@ -60,7 +60,7 @@
         "description": "The label of footer link with label=Cookie Policy linking to https://opensource.facebook.com/legal/cookie-policy/"
     },
     "copyright": {
-        "message": "版权所有 © 2022 Avernakis.",
+        "message": "版权所有 © 2022 Avernakis React.",
         "description": "The footer copyright"
     }
 }
