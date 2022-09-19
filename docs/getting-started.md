@@ -29,7 +29,6 @@ export function App() {
 }
 
 AveRenderer.render(<App />);
-
 ```
 
 You will get a light blue window:
