@@ -11,7 +11,7 @@ module.exports = {
     docs: [
         'introduction', 
         'getting-started', 
-        // 'development'
+        'development'
     ],
     components: [
         'components',
