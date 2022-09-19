@@ -6,197 +6,87 @@ title: Getting Started
 ## Usage
 
 ```bash
-> npm i ave-ui
+> npm i ave-react
 ```
 
 ## Hello Window {#hello-window}
 
-This example from [Ave-Nodejs-Template](https://github.com/qber-soft/Ave-Nodejs-Template) is designed to let us get a glimpse of Ave:
+This example from [Ave-React-Template](https://github.com/qber-soft/Ave-React-Template) is designed to let us get a glimpse of Ave React:
 
 > clone template project and `npm run dev`
 
-```ts title="https://github.com/qber-soft/Ave-Nodejs-Template/blob/main/src/index.ts"
-import {
-    App,
-    WindowCreation,
-    Window,
-    WindowFlag,
-    Grid,
-    Vec4,
-    AveGetSDKVersion,
-} from 'ave-ui';
-import * as path from 'path';
+```tsx title="https://github.com/qber-soft/Ave-React-Template/blob/main/src/app.tsx"
+import React from "react";
+import { AveRenderer, Window, Grid } from "ave-react";
+import { Vec4 } from "ave-ui";
 
-export function main(window: Window) {
-    const grid = new Grid(window);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    grid.SetBackColor(lightBlue);
-
-    //
-    const version = AveGetSDKVersion();
-    console.log(
-        `ave sdk version: ${JSON.stringify(
-            version.VersionString,
-            null,
-            4,
-        )}, is private: ${version.IsPrivateVersion}`,
-    );
-    window.SetContent(grid);
+export function App() {
+  return (
+    <Window title="Ave React Template">
+      <Grid style={{ backgroundColor: new Vec4(100, 149, 237, 255) }}></Grid>
+    </Window>
+  );
 }
 
-run(main);
+AveRenderer.render(<App />);
 
-export function run(main: Function) {
-    const app = new App();
-
-    const iconDataMap = {
-        WindowIcon: [
-            path.resolve(__dirname, '../assets/Ave#0.png'),
-            path.resolve(__dirname, '../assets/Ave#1.png'),
-            path.resolve(__dirname, '../assets/Ave#2.png'),
-        ],
-    };
-    const resMap = app.CreateResourceMap(app, [16, 24, 32], iconDataMap);
-
-    globalThis.app = app;
-
-    //
-    const cpWindow = new WindowCreation();
-    cpWindow.Title = 'Ave Template';
-    cpWindow.Flag |= WindowFlag.Layered;
-
-    const window = new Window(cpWindow);
-    globalThis._window = window;
-
-    window.OnCreateContent((window) => {
-        window.SetIcon(resMap.WindowIcon);
-        main(window);
-        return true;
-    });
-
-    if (!window.CreateWindow()) process.exit(-1);
-
-    window.SetVisible(true);
-    window.Activate();
-}
-
-export function get3x3Grid(window: Window, width = 120, height = 32) {
-    const container = new Grid(window);
-    container.ColAddSlice(1);
-    container.ColAddDpx(width);
-    container.ColAddSlice(1);
-
-    container.RowAddSlice(1);
-    container.RowAddDpx(height);
-    container.RowAddSlice(1);
-    return container;
-}
 ```
 
 You will get a light blue window:
 
 ![template basic](./assets/template-basic.png)
 
-Let's understand it piece by piece. First, create an instance of App, assign it to global to avoid GC:
-
-```ts {1,3}
-const app = new App();
-...
-globalThis.app = app;
-```
-
-Create resource map, which will be used as reference to icon.
-
-```ts {8}
-const iconDataMap = {
-    WindowIcon: [
-        path.resolve(__dirname, '../assets/Ave#0.png'),
-        path.resolve(__dirname, '../assets/Ave#1.png'),
-        path.resolve(__dirname, '../assets/Ave#2.png'),
-    ],
-};
-const resMap = app.CreateResourceMap(
-    app,
-    [16, 24, 32] /* icon size list */,
-    iconDataMap,
-);
-```
-
-Create an instance of Window:
-
-```ts {2,6}
-// cp: creation param
-const cpWindow = new WindowCreation();
-cpWindow.Title = 'Ave Template';
-cpWindow.Flag |= WindowFlag.Layered;
-
-const window = new Window(cpWindow);
-globalThis._window = window;
-```
-
-In `OnCreateContent`:
-
--   set window icon using resource map
--   create content of this simple application: just a grid with background
--   print sdk version
-
-```ts {2,10,15,17}
-window.OnCreateContent(window => {
-    window.SetIcon(resMap.WindowIcon);
-    main(window);
-    return true
-})
-
-...
-
-export function main(window: Window) {
-    const grid = new Grid(window);
-	const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-	grid.SetBackColor(lightBlue);
-
-	//
-	const version = AveGetSDKVersion();
-	console.log(`ave sdk version: ${JSON.stringify(version.VersionString, null, 4)}, is private: ${version.IsPrivateVersion}`);
-	window.SetContent(grid);
-}
-...
-```
-
-Boilerplate code about window creation:
-
-```ts
-if (!window.CreateWindow()) process.exit(-1);
-
-window.SetVisible(true);
-window.Activate();
-```
-
 ## Hello Button {#hello-button}
 
-> clone template project and `npm run dev:button`
+Replace code in `app.tsx`, which gives us a basic application with button:
 
-```ts
-export function main(window: Window) {
-    const button = new Button(window);
-    button.SetText('Button');
-    button.OnClick((sender) => {
-        sender.SetText('Button Clicked');
-        console.log('button clicked');
-    });
+```tsx
+import React from "react";
+import { AveRenderer, Window, Grid, Button } from "ave-react";
 
-    const container = get3x3Grid(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+export function App() {
+  return (
+    <Window title="Button Basic">
+      <DemoLayout>
+        <Button text="Button" onClick={() => console.log("click")}></Button>
+      </DemoLayout>
+    </Window>
+  );
 }
-```
 
-Replace code in main, which gives us a basic application with button:
+interface IDemoLayoutProps {
+  children?: any[] | any;
+  width?: string;
+  height?: string;
+}
+
+function DemoLayout(props: IDemoLayoutProps) {
+  const width = props?.width ?? "120dpx";
+  const height = props?.height ?? "32dpx";
+
+  const demoLayout = {
+    columns: `1 ${width} 1`,
+    rows: `1 ${height} 1`,
+    areas: {
+      center: { row: 1, column: 1 },
+    },
+  };
+  return (
+    <Grid style={{ layout: demoLayout }}>
+      <Grid style={{ area: demoLayout.areas.center }}>{props.children}</Grid>
+    </Grid>
+  );
+}
+
+AveRenderer.render(<App />);
+
+```
 
 <video src={require('./assets/getting-started-template-project.mp4').default} controls autoplay style={{width: 800}}/>
 
 ## Debug {#debug}
 
-Ave app is just node app, so you can debug it as usual. For convenience, we add this [launch config](https://github.com/qber-soft/Ave-Nodejs-Template/blob/main/.vscode/launch.json) in template project:
+Ave React app is just node app, so you can debug it as usual. For convenience, we add this [launch config](https://github.com/qber-soft/Ave-React-Template/blob/main/.vscode/launch.json) in template project:
 
 ```json
 {
@@ -205,8 +95,14 @@ Ave app is just node app, so you can debug it as usual. For convenience, we add 
             "name": "Launch",
             "type": "node",
             "request": "launch",
-            "args": ["./src/index.ts"],
-            "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+            "args": [
+                "./src/app.tsx"
+            ],
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "ts-node/register"
+            ],
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
             "protocol": "inspector"
@@ -230,24 +126,24 @@ Clone template project and `npm run release`, the output is a single `exe`:
 You can config app info in `ave.config.ts`:
 
 ```ts
-import { IPackConfig } from 'ave-pack';
+import { IPackConfig } from "ave-pack";
 
 const config: IPackConfig = {
-    build: {
-        projectRoot: __dirname,
-        target: 'node14-win-x64',
-        input: './build/src/index.js',
-        output: './bin/ave-app.exe',
-    },
-    resource: {
-        icon: './assets/ave.ico',
-        productVersion: '0.0.1',
-        productName: 'Ave Template App',
-        fileVersion: '0.0.1',
-        companyName: 'QberSoft',
-        fileDescription: 'The Template App of Ave',
-        LegalCopyright: `© ${new Date().getFullYear()} Ave Copyright.`,
-    },
+  build: {
+    projectRoot: __dirname,
+    target: "node14-win-x64",
+    input: "./build/src/app.js",
+    output: "./bin/ave-react-app.exe",
+  },
+  resource: {
+    icon: "./assets/ave.ico",
+    productVersion: "0.0.1",
+    productName: "Ave React Template App",
+    fileVersion: "0.0.1",
+    companyName: "QberSoft",
+    fileDescription: "The Template App of Ave React",
+    LegalCopyright: `© ${new Date().getFullYear()} Ave React Copyright.`,
+  },
 };
 
 export default config;

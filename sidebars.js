@@ -10,7 +10,7 @@
 module.exports = {
     docs: [
         'introduction', 
-        // 'getting-started', 
+        'getting-started', 
         // 'development'
     ],
     components: [
