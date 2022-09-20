@@ -15,7 +15,7 @@ module.exports = {
     ],
     components: [
         'components',
-        // 'window',
+        'window',
         // 'layout',
         // {
         //     type: 'category',
