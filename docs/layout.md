@@ -90,7 +90,7 @@ export interface IGridStyle extends IComponentStyle {
 export interface IGridLayout {
     /**
      * whitespace sperated sizes, eg. "1 50px 100dpx"
-     * 
+     *
      * 1: slice 1
      * 50px: unit is px
      * 100dpx: unit is dpx
@@ -98,6 +98,11 @@ export interface IGridLayout {
     columns?: string;
     rows?: string;
     areas?: Record<string, IGridArea>;
+}
+
+export interface IComponentStyle {
+    area?: IGridArea;
+    ...
 }
 ```
 
@@ -115,31 +120,31 @@ In this practice, we will implement grid offset: [Ant Design Grid: Offset](https
 
 ### Margin {#example-grid-margin}
 
-```ts {13,21}
-import { Window, Grid, Vec4 } from 'ave-ui';
+```tsx {19}
+const layout = {
+    columns: '1 1 1',
+    rows: '1 1 1',
+    areas: {
+        control: { row: 0, column: 0 },
+    },
+};
 
-export function main(window: Window) {
-    const container = new Grid(window);
-    container.ColAddSlice(1, 1, 1);
-    container.RowAddSlice(1, 1, 1);
+const backgroundColor = new Vec4(0, 146, 255, 255 * 0.75);
 
-    const center = new Grid(window);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    center.SetBackColor(lightBlue);
-
-    //
-    const margin = new DpiMargin(
-        DpiSize.FromPixelScaled(100), // margin left
-        DpiSize.FromPixelScaled(50), // margin top
-        DpiSize.FromPixelScaled(0), // margin right
-        DpiSize.FromPixelScaled(0), // margin bottom
+export function App() {
+    return (
+        <Window>
+            <Grid style={{ layout }}>
+                <Grid
+                    style={{
+                        backgroundColor,
+                        area: layout.areas.control,
+                        margin: '100dpx 50dpx 0 0',
+                    }}
+                ></Grid>
+            </Grid>
+        </Window>
     );
-
-    const gridControl = container.ControlAdd(center);
-    gridControl.SetGrid(0, 0, 1, 1);
-    gridControl.SetMargin(margin);
-
-    window.SetContent(container);
 }
 ```
 
@@ -149,23 +154,10 @@ In this example, we set margin of the blue grid as shown below:
 
 #### API {#api-margin}
 
-```ts
-export interface IGridControl<T extends IControl = IControl> {
-    SetMargin(margin: DpiMargin): IGridControl<T>;
-}
-
-export class DpiMargin {
-    Left: DpiSize;
-    Top: DpiSize;
-    Right: DpiSize;
-    Bottom: DpiSize;
-
-    static FromPixelScaled(
-        left: number,
-        top: number,
-        right: number,
-        bottom: number,
-    ): DpiMargin;
+```ts {3}
+export interface IComponentStyle {
+    ...
+    margin?: string;
 }
 ```
 
