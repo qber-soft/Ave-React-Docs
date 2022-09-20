@@ -54,7 +54,8 @@ export function App() {
                     style={{
                         opacity: 0.3,
                         backgroundColor: new Vec4(100, 149, 237, 255),
-                    }}></Grid>
+                    }}
+                ></Grid>
             </Grid>
         </Window>
     );
