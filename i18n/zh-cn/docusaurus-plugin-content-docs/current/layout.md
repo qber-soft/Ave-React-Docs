@@ -13,48 +13,61 @@ Ave 中 grid 的含义和 web 中的（[A Complete Guide to Grid](https://css-tr
 
 ### 背景色 {#example-grid-background}
 
-```ts {5,6}
-import { Window, Grid, Vec4 } from 'ave-ui';
-
-export function main(window: Window) {
-    const grid = new Grid(window);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    grid.SetBackColor(lightBlue);
-    window.SetContent(grid);
+```tsx {6}
+export function App() {
+    return (
+        <Window>
+            <Grid
+                style={{
+                    backgroundColor: new Vec4(0, 146, 255, 255 * 0.75),
+                }}
+            ></Grid>
+        </Window>
+    );
 }
 ```
 
-在 Ave 中我们使用`Vec4`类来表示颜色，其中每个颜色的取值范围都是`[0,255]`，然后调用 grid 的`SetBackColor`设置背景颜色。
+在 Ave 中我们使用`Vec4`类来表示颜色，其中每个颜色的取值范围都是`[0,255]`，然后使用 grid 的`backgroundColor`设置背景颜色。
 
 ![grid background](./assets/grid-background.png)
 
 #### API {#api-background}
 
-```ts
-export interface IGrid extends IControl {
-    // 设置背景颜色
-    SetBackColor(vColor: Vec4): Grid;
-    // 获取背景颜色
-    GetBackColor(): Vec4;
+```ts {7}
+export interface IGridComponentProps extends IComponentProps {
+    style?: IGridStyle;
+    ...
+}
+
+export interface IGridStyle extends IComponentStyle {
+    backgroundColor?: Vec4;
+    ...
 }
 ```
 
 ### 添加组件 {#example-grid-add-control}
 
-```ts {5,6,12}
-import { Window, Grid, Vec4 } from 'ave-ui';
+```tsx {1}
+const layout = {
+    columns: '1 1 1',
+    rows: '1 1 1',
+    areas: {
+        center: { row: 1, column: 1 },
+    },
+};
 
-export function main(window: Window) {
-    const container = new Grid(window);
-    container.ColAddSlice(1, 1, 1);
-    container.RowAddSlice(1, 1, 1);
+const backgroundColor = new Vec4(0, 146, 255, 255 * 0.75);
 
-    const center = new Grid(window);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    center.SetBackColor(lightBlue);
-
-    container.ControlAdd(center).SetGrid(1, 1, 1, 1);
-    window.SetContent(container);
+export function App() {
+    return (
+        <Window>
+            <Grid style={{ layout }}>
+                <Grid
+                    style={{ backgroundColor, area: layout.areas.center }}
+                ></Grid>
+            </Grid>
+        </Window>
+    );
 }
 ```
 
@@ -62,39 +75,35 @@ export function main(window: Window) {
 
 ![add control](./assets/grid-add-control.png)
 
-`RowAddSlice`和`ColAddSlice`分别是为 grid 添加行和列，`slice`表明这里添加的行、列是成比例的，也就是说，添加的行和列都是 1：1：1，这样可以适应窗口大小变化：
+`rows`和`columns`分别是为 grid 添加行和列，`slice`表明这里添加的行、列是成比例的，也就是说，添加的行和列都是 1：1：1，这样可以适应窗口大小变化：
 
 ![resize](./assets/grid-resize.gif)
 
-我们使用`ControlAdd`将控件（grid 也是控件）添加到 grid 中，它返回一个类型为`IGridControl`对象，和原本添加的控件相比，这个对象多了一些方便使用的方法。
-
 #### API {#api-add-control}
 
-```ts
-export class Grid implements IGrid {
-	// 添加行，参数为每行的比例
-	RowAddSlice(...x: number[]);
-	ColAddSlice(...x: number[]);
-
-	// 添加行，但参数不是比例了，而是固定可缩放像素大小（dpx），比如UI可以控制放大到120%，dpx会跟着缩放
-	RowAddDpx(...x: number[]);
-	ColAddDpx(...x: number[]);
-
-	// 添加行，参数是固定像素大小（px）
-	RowAddPx(...x: number[]);
-	ColAddPx(...x: number[]);
+```ts {3}
+export interface IGridStyle extends IComponentStyle {
+    ...
+    layout?: IGridLayout;
 }
 
-export interface IGrid {
-	// 将控件添加到grid中
-	ControlAdd(control: IControl): IGridControl<IControl>;
+export interface IGridLayout {
+    /**
+     * whitespace sperated sizes, eg. "1 50px 100dpx"
+     *
+     * 1: slice 1
+     * 50px: unit is px
+     * 100dpx: unit is dpx
+     */
+    columns?: string;
+    rows?: string;
+    areas?: Record<string, IGridArea>;
 }
 
-export interface IGridControl<T extends IControl = IControl> {
-	// 设置控件位置到grid的x列y行，占据xspan列，yspan行（横着是列，竖着是行）
-	// 注意：控件会充满整个格子
-	SetGrid(x: number, y: number, xspan = 1 yspan = 1): IGridControl<T>;
-};
+export interface IComponentStyle {
+    area?: IGridArea;
+    ...
+}
 ```
 
 #### 练习: grid {#grid-practice-grid}
@@ -111,31 +120,31 @@ export interface IGridControl<T extends IControl = IControl> {
 
 ### 边距 {#example-grid-margin}
 
-```ts {13,21}
-import { Window, Grid, Vec4 } from 'ave-ui';
+```tsx {19}
+const layout = {
+    columns: '1 1 1',
+    rows: '1 1 1',
+    areas: {
+        control: { row: 0, column: 0 },
+    },
+};
 
-export function main(window: Window) {
-    const container = new Grid(window);
-    container.ColAddSlice(1, 1, 1);
-    container.RowAddSlice(1, 1, 1);
+const backgroundColor = new Vec4(0, 146, 255, 255 * 0.75);
 
-    const center = new Grid(window);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    center.SetBackColor(lightBlue);
-
-    //
-    const margin = new DpiMargin(
-        DpiSize.FromPixelScaled(100), // margin left
-        DpiSize.FromPixelScaled(50), // margin top
-        DpiSize.FromPixelScaled(0), // margin right
-        DpiSize.FromPixelScaled(0), // margin bottom
+export function App() {
+    return (
+        <Window>
+            <Grid style={{ layout }}>
+                <Grid
+                    style={{
+                        backgroundColor,
+                        area: layout.areas.control,
+                        margin: '100dpx 50dpx 0 0',
+                    }}
+                ></Grid>
+            </Grid>
+        </Window>
     );
-
-    const gridControl = container.ControlAdd(center);
-    gridControl.SetGrid(0, 0, 1, 1);
-    gridControl.SetMargin(margin);
-
-    window.SetContent(container);
 }
 ```
 
@@ -145,23 +154,10 @@ export function main(window: Window) {
 
 #### API {#api-margin}
 
-```ts
-export interface IGridControl<T extends IControl = IControl> {
-    SetMargin(margin: DpiMargin): IGridControl<T>;
-}
-
-export class DpiMargin {
-    Left: DpiSize;
-    Top: DpiSize;
-    Right: DpiSize;
-    Bottom: DpiSize;
-
-    static FromPixelScaled(
-        left: number,
-        top: number,
-        right: number,
-        bottom: number,
-    ): DpiMargin;
+```ts {3}
+export interface IComponentStyle {
+    ...
+    margin?: string;
 }
 ```
 
@@ -171,7 +167,7 @@ export class DpiMargin {
 
 ![grid practice 2](./assets/grid-practice-gutter.png)
 
-### 相对位置 {#example-set-post}
+<!-- ### 相对位置 {#example-set-post}
 
 如果我们不想将控件放进 grid 的格子中（调用`SetGrid`），那么还可以采取设置相对位置的方式来设置它的位置。
 
@@ -223,32 +219,31 @@ export class DpiSize {
 export class DpiSize_2 {
     constructor(x: DpiSize, y: DpiSize);
 }
-```
+``` -->
 
 ### 透明度 {#example-grid-opacity}
 
-要想实现半透明的效果，有两种方式，一种是调整背景颜色的 alpha 值，一种是调用`SetOpacity`方法：
+要想实现半透明的效果，有两种方式，一种是调整背景颜色的 alpha 值，另一种是设置`opacity`：
 
-```ts {10,16}
-import { Window, Grid, Vec4 } from 'ave-ui';
+```tsx {14-15}
+const layout = {
+	columns: "1 1 1 1 1",
+	rows: "1 1 1 1 1",
+	areas: {
+		left: { row: 1, column: 1 },
+		right: { row: 1, column: 3 },
+	},
+};
 
-export function main(window: Window) {
-    const container = new Grid(window);
-    container.ColAddSlice(1, 1, 1, 1, 1);
-    container.RowAddSlice(1, 1, 1, 1, 1);
-
-    const gridA = new Grid(window);
-    const aColor = new Vec4(0, 146, 255, 255 * 0.25);
-    gridA.SetBackColor(aColor);
-    container.ControlAdd(gridA).SetGrid(1, 1, 1, 1);
-
-    const gridB = new Grid(window);
-    const bColor = new Vec4(0, 146, 255, 255);
-    gridB.SetBackColor(bColor);
-    gridB.SetOpacity(0.25);
-    container.ControlAdd(gridB).SetGrid(3, 1, 1, 1);
-
-    window.SetContent(container);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: new Vec4(0, 146, 255, 255 * 0.25), area: layout.areas.left }}></Grid>
+				<Grid style={{ backgroundColor: new Vec4(0, 146, 255, 255), area: layout.areas.right, opacity: 0.25 }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
 
@@ -259,7 +254,7 @@ export function main(window: Window) {
 两种方式的区别如下：
 
 -   opacity：设置整体透明度，包括放在里面的控件全部都会半透明
--   setBackColor：就只有 grid 本身的背景部分有影响
+-   backgroundColor：就只有 grid 本身的背景部分有影响
 
 ## 练习答案 {#practice-solutions}
 
@@ -267,48 +262,47 @@ export function main(window: Window) {
 
 > [练习描述](#grid-practice-grid)
 
-为了实现适应窗口拉伸，我们仍然使用`ColAddSlice`添加列。行之间的间隙则使用`RowAddDpx`。
-
-```ts {17,19}
-import { Window, Grid, Vec4 } from 'ave-ui';
-
-const Color = {
-    White: new Vec4(255, 255, 255, 255),
-    DarkBlue: new Vec4(0, 146, 255, 255),
-    LightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+```tsx
+const colors = {
+	white: new Vec4(255, 255, 255, 255),
+	darkBlue: new Vec4(0, 146, 255, 255),
+	lightBlue: new Vec4(0, 146, 255, 255 * 0.75),
 };
 
-function createGrid(color: Vec4, window: Window) {
-    return new Grid(window).SetBackColor(color);
-}
+const layout = {
+	columns: Array.from<number>({ length: 24 }).fill(1).join(" "),
+	rows: [50, 25, 50, 25, 50, 25, 50, 25].map((r) => `${r}dpx`).join(" "),
+	areas: {
+		_24: { row: 0, column: 0, rowSpan: 1, columnSpan: 24 },
+		_12_1: { row: 2, column: 0, rowSpan: 1, columnSpan: 12 },
+		_12_2: { row: 2, column: 12, rowSpan: 1, columnSpan: 12 },
+		_8_1: { row: 4, column: 0, rowSpan: 1, columnSpan: 8 },
+		_8_2: { row: 4, column: 8, rowSpan: 1, columnSpan: 8 },
+		_8_3: { row: 4, column: 16, rowSpan: 1, columnSpan: 8 },
+		_6_1: { row: 6, column: 0, rowSpan: 1, columnSpan: 6 },
+		_6_2: { row: 6, column: 6, rowSpan: 1, columnSpan: 6 },
+		_6_3: { row: 6, column: 12, rowSpan: 1, columnSpan: 6 },
+		_6_4: { row: 6, column: 18, rowSpan: 1, columnSpan: 6 },
+	},
+};
 
-export function main(window: Window) {
-    const grid = new Grid(window);
-
-    // 添加24列
-    grid.ColAddSlice(...Array.from<number>({ length: 24 }).fill(1));
-    // 有颜色的那一行为50dpx，间隙（空白的行）为25dpx
-    grid.RowAddDpx(...[50, 25, 50, 25, 50, 25, 50, 25]);
-
-    //
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 0, 24, 1);
-    grid.ControlAdd(createGrid(Color.White, window)).SetGrid(0, 1, 24, 1);
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 2, 12, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(12, 2, 12, 1);
-    grid.ControlAdd(createGrid(Color.White, window)).SetGrid(0, 3, 24, 1);
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 4, 8, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(8, 4, 8, 1);
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(16, 4, 8, 1);
-    grid.ControlAdd(createGrid(Color.White, window)).SetGrid(0, 5, 24, 1);
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 6, 6, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(6, 6, 6, 1);
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(12, 6, 6, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(18, 6, 6, 1);
-
-    window.SetContent(grid);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._24 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._12_1 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._12_2 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._8_1 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._8_2 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._8_3 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._6_1 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._6_2 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._6_3 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._6_4 }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
 
@@ -316,80 +310,46 @@ export function main(window: Window) {
 
 > [练习描述](#grid-practice-offset)
 
-```ts {31-32}
-import { Window, Grid, Vec4 } from 'ave-ui';
-
-const Color = {
-    White: new Vec4(255, 255, 255, 255),
-    DarkBlue: new Vec4(0, 146, 255, 255),
-    LightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+```tsx
+const colors = {
+	darkBlue: new Vec4(0, 146, 255, 255),
 };
 
-function createGrid(color: Vec4, window: Window) {
-    return new Grid(window).SetBackColor(color);
-}
+const span1 = 8;
+const offset_11 = 0;
+const offset_12 = offset_11 + span1 + 8;
 
-export function main(window: Window) {
-    const grid = new Grid(window);
+const span2 = 6;
+const offset_21 = 6;
+const offset_22 = offset_21 + span2 + 6;
 
-    // 添加24列
-    grid.ColAddSlice(...Array.from<number>({ length: 24 }).fill(1));
+const span3 = 12;
+const offset_3 = 6;
 
-    // 中间固定高度的用来画例子
-    // 50dpx: 画例子
-    // 25dpx：间隙
-    grid.RowAddSlice(1);
-    grid.RowAddDpx(50, 25, 50, 25, 50);
-    grid.RowAddSlice(1);
+const layout = {
+	columns: Array.from<number>({ length: 24 }).fill(1).join(" "),
+	rows: `1 50dpx 25dpx 50dpx 25dpx 50dpx 1`,
+	areas: {
+		_11: { row: 1, column: offset_11, rowSpan: 1, columnSpan: span1 },
+		_12: { row: 1, column: offset_12, rowSpan: 1, columnSpan: span1 },
+		_21: { row: 3, column: offset_21, rowSpan: 1, columnSpan: span2 },
+		_22: { row: 3, column: offset_22, rowSpan: 1, columnSpan: span2 },
+		_3: { row: 5, column: offset_3, rowSpan: 1, columnSpan: span3 },
+	},
+};
 
-    {
-        const span = 8;
-        const offset1 = 0;
-        const offset2 = offset1 + span + 8;
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset1,
-            1,
-            span,
-            1,
-        );
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset2,
-            1,
-            span,
-            1,
-        );
-    }
-
-    {
-        const span = 6;
-        const offset1 = 6;
-        const offset2 = offset1 + span + 6;
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset1,
-            3,
-            span,
-            1,
-        );
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset2,
-            3,
-            span,
-            1,
-        );
-    }
-
-    {
-        const span = 12;
-        const offset = 6;
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset,
-            5,
-            span,
-            1,
-        );
-    }
-
-    window.SetContent(grid);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._11 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._12 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._21 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._22 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._3 }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
 
@@ -399,51 +359,36 @@ export function main(window: Window) {
 
 我们使用边距来实现区块间隔的效果：
 
-```ts {25,26-31,33}
-import { Window, Grid, Vec4, DpiMargin, DpiSize } from 'ave-ui';
-
-const Color = {
-    White: new Vec4(255, 255, 255, 255),
-    DarkBlue: new Vec4(0, 146, 255, 255),
-    LightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+```tsx
+const colors = {
+	lightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+	darkBlue: new Vec4(0, 146, 255, 255),
 };
 
-function createGrid(color: Vec4, window: Window) {
-    return new Grid(window).SetBackColor(color);
-}
+const gutter = 50;
+const margin = `${gutter / 2}dpx 0 ${gutter / 2}dpx 0`;
 
-export function main(window: Window) {
-    const grid = new Grid(window);
+const layout = {
+	columns: Array.from<number>({ length: 24 }).fill(1).join(" "),
+	rows: `1 50dpx 1`,
+	areas: {
+		_1: { row: 1, column: 0, rowSpan: 1, columnSpan: 6 },
+		_2: { row: 1, column: 6, rowSpan: 1, columnSpan: 6 },
+		_3: { row: 1, column: 12, rowSpan: 1, columnSpan: 6 },
+		_4: { row: 1, column: 18, rowSpan: 1, columnSpan: 6 },
+	},
+};
 
-    // 添加24列
-    grid.ColAddSlice(...Array.from<number>({ length: 24 }).fill(1));
-
-    // 添加3行，中间固定高度的用来画例子
-    grid.RowAddSlice(1);
-    grid.RowAddDpx(50);
-    grid.RowAddSlice(1);
-
-    const gutter = 50; // dpx
-    const margin = new DpiMargin(
-        DpiSize.FromPixelScaled(gutter / 2),
-        DpiSize.FromPixelScaled(0),
-        DpiSize.FromPixelScaled(gutter / 2),
-        DpiSize.FromPixelScaled(0),
-    );
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window))
-        .SetGrid(0, 1, 6, 1)
-        .SetMargin(margin);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window))
-        .SetGrid(6, 1, 6, 1)
-        .SetMargin(margin);
-    grid.ControlAdd(createGrid(Color.LightBlue, window))
-        .SetGrid(12, 1, 6, 1)
-        .SetMargin(margin);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window))
-        .SetGrid(18, 1, 6, 1)
-        .SetMargin(margin);
-
-    window.SetContent(grid);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._1, margin }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._2, margin }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._3, margin }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._4, margin }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
