@@ -167,7 +167,7 @@ In this practice, we will implement grid gutter: [Ant Design Grid: Gutter](https
 
 ![grid practice 2](./assets/grid-practice-gutter.png)
 
-### Position {#example-set-post}
+<!-- ### Position {#example-set-post}
 
 We can also manually set position of control, but remember to set size at the same time.
 
@@ -219,32 +219,31 @@ export class DpiSize {
 export class DpiSize_2 {
     constructor(x: DpiSize, y: DpiSize);
 }
-```
+``` -->
 
 ### Opacity {#example-grid-opacity}
 
-There are two ways to get transparent grid, one way is to adjust alpha of background color, another is to invoke `SetOpacity`.
+There are two ways to get transparent grid, one way is to adjust alpha of background color, another is to set `opacity`.
 
-```ts {10,16}
-import { Window, Grid, Vec4 } from 'ave-ui';
+```tsx {14-15}
+const layout = {
+	columns: "1 1 1 1 1",
+	rows: "1 1 1 1 1",
+	areas: {
+		left: { row: 1, column: 1 },
+		right: { row: 1, column: 3 },
+	},
+};
 
-export function main(window: Window) {
-    const container = new Grid(window);
-    container.ColAddSlice(1, 1, 1, 1, 1);
-    container.RowAddSlice(1, 1, 1, 1, 1);
-
-    const gridA = new Grid(window);
-    const aColor = new Vec4(0, 146, 255, 255 * 0.25);
-    gridA.SetBackColor(aColor);
-    container.ControlAdd(gridA).SetGrid(1, 1, 1, 1);
-
-    const gridB = new Grid(window);
-    const bColor = new Vec4(0, 146, 255, 255);
-    gridB.SetBackColor(bColor);
-    gridB.SetOpacity(0.25);
-    container.ControlAdd(gridB).SetGrid(3, 1, 1, 1);
-
-    window.SetContent(container);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: new Vec4(0, 146, 255, 255 * 0.25), area: layout.areas.left }}></Grid>
+				<Grid style={{ backgroundColor: new Vec4(0, 146, 255, 255), area: layout.areas.right, opacity: 0.25 }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
 
@@ -254,8 +253,8 @@ As shown below:
 
 Differences are:
 
--   SetOpacity: all controls in grid will be affected
--   setBackColor: only background of grid will be affected
+-   opacity: all controls in grid will be affected
+-   backgroundColor: only background of grid will be affected
 
 ## Practice Solutions {#practice-solutions}
 
@@ -263,46 +262,47 @@ Differences are:
 
 > [Practice Description](#grid-practice-grid)
 
-```ts {17,19}
-import { Window, Grid, Vec4 } from 'ave-ui';
-
-const Color = {
-    White: new Vec4(255, 255, 255, 255),
-    DarkBlue: new Vec4(0, 146, 255, 255),
-    LightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+```tsx
+const colors = {
+	white: new Vec4(255, 255, 255, 255),
+	darkBlue: new Vec4(0, 146, 255, 255),
+	lightBlue: new Vec4(0, 146, 255, 255 * 0.75),
 };
 
-function createGrid(color: Vec4, window: Window) {
-    return new Grid(window).SetBackColor(color);
-}
+const layout = {
+	columns: Array.from<number>({ length: 24 }).fill(1).join(" "),
+	rows: [50, 25, 50, 25, 50, 25, 50, 25].map((r) => `${r}dpx`).join(" "),
+	areas: {
+		_24: { row: 0, column: 0, rowSpan: 1, columnSpan: 24 },
+		_12_1: { row: 2, column: 0, rowSpan: 1, columnSpan: 12 },
+		_12_2: { row: 2, column: 12, rowSpan: 1, columnSpan: 12 },
+		_8_1: { row: 4, column: 0, rowSpan: 1, columnSpan: 8 },
+		_8_2: { row: 4, column: 8, rowSpan: 1, columnSpan: 8 },
+		_8_3: { row: 4, column: 16, rowSpan: 1, columnSpan: 8 },
+		_6_1: { row: 6, column: 0, rowSpan: 1, columnSpan: 6 },
+		_6_2: { row: 6, column: 6, rowSpan: 1, columnSpan: 6 },
+		_6_3: { row: 6, column: 12, rowSpan: 1, columnSpan: 6 },
+		_6_4: { row: 6, column: 18, rowSpan: 1, columnSpan: 6 },
+	},
+};
 
-export function main(window: Window) {
-    const grid = new Grid(window);
-
-    //
-    grid.ColAddSlice(...Array.from<number>({ length: 24 }).fill(1));
-    //
-    grid.RowAddDpx(...[50, 25, 50, 25, 50, 25, 50, 25]);
-
-    //
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 0, 24, 1);
-    grid.ControlAdd(createGrid(Color.White, window)).SetGrid(0, 1, 24, 1);
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 2, 12, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(12, 2, 12, 1);
-    grid.ControlAdd(createGrid(Color.White, window)).SetGrid(0, 3, 24, 1);
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 4, 8, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(8, 4, 8, 1);
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(16, 4, 8, 1);
-    grid.ControlAdd(createGrid(Color.White, window)).SetGrid(0, 5, 24, 1);
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(0, 6, 6, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(6, 6, 6, 1);
-    grid.ControlAdd(createGrid(Color.LightBlue, window)).SetGrid(12, 6, 6, 1);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(18, 6, 6, 1);
-
-    window.SetContent(grid);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._24 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._12_1 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._12_2 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._8_1 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._8_2 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._8_3 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._6_1 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._6_2 }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._6_3 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._6_4 }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
 
@@ -310,78 +310,46 @@ export function main(window: Window) {
 
 > [Practice Description](#grid-practice-offset)
 
-```ts {29-30}
-import { Window, Grid, Vec4 } from 'ave-ui';
-
-const Color = {
-    White: new Vec4(255, 255, 255, 255),
-    DarkBlue: new Vec4(0, 146, 255, 255),
-    LightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+```tsx
+const colors = {
+	darkBlue: new Vec4(0, 146, 255, 255),
 };
 
-function createGrid(color: Vec4, window: Window) {
-    return new Grid(window).SetBackColor(color);
-}
+const span1 = 8;
+const offset_11 = 0;
+const offset_12 = offset_11 + span1 + 8;
 
-export function main(window: Window) {
-    const grid = new Grid(window);
+const span2 = 6;
+const offset_21 = 6;
+const offset_22 = offset_21 + span2 + 6;
 
-    //
-    grid.ColAddSlice(...Array.from<number>({ length: 24 }).fill(1));
+const span3 = 12;
+const offset_3 = 6;
 
-    //
-    grid.RowAddSlice(1);
-    grid.RowAddDpx(50, 25, 50, 25, 50);
-    grid.RowAddSlice(1);
+const layout = {
+	columns: Array.from<number>({ length: 24 }).fill(1).join(" "),
+	rows: `1 50dpx 25dpx 50dpx 25dpx 50dpx 1`,
+	areas: {
+		_11: { row: 1, column: offset_11, rowSpan: 1, columnSpan: span1 },
+		_12: { row: 1, column: offset_12, rowSpan: 1, columnSpan: span1 },
+		_21: { row: 3, column: offset_21, rowSpan: 1, columnSpan: span2 },
+		_22: { row: 3, column: offset_22, rowSpan: 1, columnSpan: span2 },
+		_3: { row: 5, column: offset_3, rowSpan: 1, columnSpan: span3 },
+	},
+};
 
-    {
-        const span = 8;
-        const offset1 = 0;
-        const offset2 = offset1 + span + 8;
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset1,
-            1,
-            span,
-            1,
-        );
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset2,
-            1,
-            span,
-            1,
-        );
-    }
-
-    {
-        const span = 6;
-        const offset1 = 6;
-        const offset2 = offset1 + span + 6;
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset1,
-            3,
-            span,
-            1,
-        );
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset2,
-            3,
-            span,
-            1,
-        );
-    }
-
-    {
-        const span = 12;
-        const offset = 6;
-        grid.ControlAdd(createGrid(Color.DarkBlue, window)).SetGrid(
-            offset,
-            5,
-            span,
-            1,
-        );
-    }
-
-    window.SetContent(grid);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._11 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._12 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._21 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._22 }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._3 }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
 
@@ -391,51 +359,36 @@ export function main(window: Window) {
 
 We will use margin to simulate gutter:
 
-```ts {25,26-31,33}
-import { Window, Grid, Vec4, DpiMargin, DpiSize } from 'ave-ui';
-
-const Color = {
-    White: new Vec4(255, 255, 255, 255),
-    DarkBlue: new Vec4(0, 146, 255, 255),
-    LightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+```tsx
+const colors = {
+	lightBlue: new Vec4(0, 146, 255, 255 * 0.75),
+	darkBlue: new Vec4(0, 146, 255, 255),
 };
 
-function createGrid(color: Vec4, window: Window) {
-    return new Grid(window).SetBackColor(color);
-}
+const gutter = 50;
+const margin = `${gutter / 2}dpx 0 ${gutter / 2}dpx 0`;
 
-export function main(window: Window) {
-    const grid = new Grid(window);
+const layout = {
+	columns: Array.from<number>({ length: 24 }).fill(1).join(" "),
+	rows: `1 50dpx 1`,
+	areas: {
+		_1: { row: 1, column: 0, rowSpan: 1, columnSpan: 6 },
+		_2: { row: 1, column: 6, rowSpan: 1, columnSpan: 6 },
+		_3: { row: 1, column: 12, rowSpan: 1, columnSpan: 6 },
+		_4: { row: 1, column: 18, rowSpan: 1, columnSpan: 6 },
+	},
+};
 
-    //
-    grid.ColAddSlice(...Array.from<number>({ length: 24 }).fill(1));
-
-    //
-    grid.RowAddSlice(1);
-    grid.RowAddDpx(50);
-    grid.RowAddSlice(1);
-
-    const gutter = 50; // dpx
-    const margin = new DpiMargin(
-        DpiSize.FromPixelScaled(gutter / 2),
-        DpiSize.FromPixelScaled(0),
-        DpiSize.FromPixelScaled(gutter / 2),
-        DpiSize.FromPixelScaled(0),
-    );
-
-    grid.ControlAdd(createGrid(Color.LightBlue, window))
-        .SetGrid(0, 1, 6, 1)
-        .SetMargin(margin);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window))
-        .SetGrid(6, 1, 6, 1)
-        .SetMargin(margin);
-    grid.ControlAdd(createGrid(Color.LightBlue, window))
-        .SetGrid(12, 1, 6, 1)
-        .SetMargin(margin);
-    grid.ControlAdd(createGrid(Color.DarkBlue, window))
-        .SetGrid(18, 1, 6, 1)
-        .SetMargin(margin);
-
-    window.SetContent(grid);
+export function App() {
+	return (
+		<Window>
+			<Grid style={{ layout }}>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._1, margin }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._2, margin }}></Grid>
+				<Grid style={{ backgroundColor: colors.lightBlue, area: layout.areas._3, margin }}></Grid>
+				<Grid style={{ backgroundColor: colors.darkBlue, area: layout.areas._4, margin }}></Grid>
+			</Grid>
+		</Window>
+	);
 }
 ```
