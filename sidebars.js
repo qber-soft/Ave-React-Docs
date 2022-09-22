@@ -50,7 +50,7 @@ module.exports = {
         //         'icon',
         //     ],
         // },
-        // 'custom-component',
+        'custom-component',
         // 'theme',
         // {
         //     type: 'category',
