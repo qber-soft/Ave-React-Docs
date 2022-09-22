@@ -9,18 +9,49 @@ title: 自定义组件
 
 我们使用 `Placeholder` 来实现自定义组件：
 
-> [examples/unit/placeholder/placeholder-basic.ts](https://github.com/qber-soft/Ave-Nodejs/blob/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit/placeholder/placeholder-basic.ts)
+```tsx {13}
+export function App() {
+    const onPaintPost = useCallback<IPlaceholderComponentProps['onPaintPost']>(
+        (sender: IPlaceholder, painter: IPainter, rect: Rect) => {
+            painter.SetPenColor(new Vec4(255, 0, 0, 255));
+            painter.DrawRectangle(0, 0, rect.w, rect.h);
+        },
+        [],
+    );
 
-```ts {3}
-export function main(window: Window) {
-    const placeholder = new Placeholder(window);
-    placeholder.OnPaintPost((sender, painter, rect) => {
-        painter.SetPenColor(new Vec4(255, 0, 0, 255));
-        painter.DrawRectangle(0, 0, rect.w, rect.h);
-    });
-    const container = getControlDemoContainer(window, 1, 500, 500);
-    container.ControlAdd(placeholder).SetGrid(1, 1);
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout width="500dpx" height="500dpx">
+                <Placeholder onPaintPost={onPaintPost} />
+            </DemoLayout>
+        </Window>
+    );
+}
+
+export interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
+
+export function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '120dpx';
+    const height = props?.height ?? '32dpx';
+
+    const demoLayout = {
+        columns: `1 ${width} 1`,
+        rows: `1 ${height} 1`,
+        areas: {
+            center: { row: 1, column: 1 },
+        },
+    };
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.center }}>
+                {props.children}
+            </Grid>
+        </Grid>
+    );
 }
 ```
 
@@ -33,15 +64,19 @@ export function main(window: Window) {
 #### API {#api-basic}
 
 ```ts
-export interface IControl extends IControlExtension {
-    OnPaintPost(
-        fn: (sender: IControl, painter: IPainter, rect: Rect) => void,
-    ): IControl;
+export interface IPlaceholderComponentProps extends IComponentProps {
+    onPaintPost?: Parameters<IControl["OnPaintPost"]>[0];
+    onPointerEnter?: Parameters<IControl["OnPointerEnter"]>[0];
+    onPointerLeave?: Parameters<IControl["OnPointerLeave"]>[0];
+    onPointerPress?: Parameters<IControl["OnPointerPress"]>[0];
+    onPointerRelease?: Parameters<IControl["OnPointerRelease"]>[0];
+    onPointerMove?: Parameters<IControl["OnPointerMove"]>[0];
 }
 
 export interface IPainter {
     SetPenColor(vColor: Vec4): void;
     DrawRectangle(x: number, y: number, w: number, h: number): void;
+	...
 }
 ```
 
@@ -51,16 +86,130 @@ export interface IPainter {
 
 ![custom button](./assets/custom-button.gif)
 
-> [examples/unit/placeholder/custom-button.ts](https://github.com/qber-soft/Ave-Nodejs/blob/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit/placeholder/custom-button.ts)
+```tsx
+export function App() {
+	return (
+		<Window>
+			<DemoLayout>
+				<Button text="Primary Button" />
+			</DemoLayout>
+		</Window>
+	);
+}
 
-用法和内置组件一样的:
+export interface IDemoLayoutProps {
+	...
+}
 
-```ts
-export function main(window: Window) {
-    const button = new Button(window, 'Primary Button');
-    const container = getControlDemoContainer(window, 1, 120, 32);
-    container.ControlAdd(button.control).SetGrid(1, 1);
-    window.SetContent(container);
+export function DemoLayout(props: IDemoLayoutProps) {
+	...
+}
+
+interface IButtonStyle {
+	border: {
+		radius: number;
+	};
+	color: Vec4;
+	backgroundColor: Vec4;
+	font: {
+		size: number;
+		family: string[];
+	};
+}
+
+interface IButtonProps {
+	text: string;
+	style?: IButtonStyle;
+}
+
+const colors = {
+	normal: new Vec4(24, 144, 255, 255),
+	hover: new Vec4(64, 169, 255, 255),
+	active: new Vec4(9, 109, 217, 255),
+	white: new Vec4(255, 255, 255, 255),
+};
+
+const defaultButtonStyle = {
+	border: {
+		radius: 3,
+	},
+	color: colors.white,
+	backgroundColor: colors.normal,
+	font: {
+		size: 9,
+		family: ["Segoe UI", "Microsoft YaHei UI", "Meiryo UI", "SimSun-ExtB"],
+	},
+};
+
+function Button(props: IButtonProps) {
+	const [style, setStyle] = useState(props.style ?? defaultButtonStyle);
+	const text = props.text ?? "Button";
+
+	const [isEntered, setIsEntered] = useState(false);
+	const [isPressed, setIsPressed] = useState(false);
+
+	const onPaintPost = useCallback<IPlaceholderComponentProps["onPaintPost"]>(
+		(sender: IPlaceholder, painter: IPainter, rect: Rect) => {
+			const { border, color, backgroundColor, font: fontStyle } = style;
+
+			const fontDesc = new FontDescription();
+			fontDesc.Name = fontStyle.family;
+			fontDesc.Size = fontStyle.size;
+
+			const context = getAppContext();
+			const window = context.getWindow();
+			const font = new Byo2Font(window, fontDesc);
+
+			painter.SetFillColor(backgroundColor);
+			painter.FillRoundedRectangle(rect.x, rect.y, rect.w, rect.h, border.radius, border.radius);
+			painter.SetTextColor(color);
+			painter.DrawString(font, rect, text, DrawTextFlag.Center | DrawTextFlag.VCenter, text.length);
+		},
+		[style, text]
+	);
+
+	const onPointerEnter = useCallback<IPlaceholderComponentProps["onPointerEnter"]>((sender: IPlaceholder) => {
+		setIsEntered(true);
+		setStyle({
+			...style,
+			backgroundColor: colors.hover,
+		});
+		sender.Redraw();
+	}, []);
+
+	const onPointerLeave = useCallback<IPlaceholderComponentProps["onPointerLeave"]>(
+		(sender: IPlaceholder) => {
+			setIsEntered(false);
+			if (!isPressed) {
+				setStyle({
+					...style,
+					backgroundColor: colors.normal,
+				});
+			}
+			sender.Redraw();
+		},
+		[isPressed]
+	);
+
+	const onPointerPress = useCallback<IPlaceholderComponentProps["onPointerPress"]>((sender: IPlaceholder) => {
+		setIsPressed(true);
+		setStyle({
+			...style,
+			backgroundColor: colors.active,
+		});
+		sender.Redraw();
+	}, []);
+
+	const onPointerRelease = useCallback<IPlaceholderComponentProps["onPointerRelease"]>((sender: IPlaceholder) => {
+		setIsPressed(false);
+		setStyle({
+			...style,
+			backgroundColor: colors.normal,
+		});
+		sender.Redraw();
+	}, []);
+
+	return <Placeholder onPaintPost={onPaintPost} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave} onPointerPress={onPointerPress} onPointerRelease={onPointerRelease} />;
 }
 ```
 
@@ -68,113 +217,72 @@ export function main(window: Window) {
 
 一个按钮其实就是一个矩形 + 上面的字：
 
-```ts {14-17}
-class Button {
-	text: string;
-	placeholder: Placeholder;
-	font: Byo2Font;
-	style: IButtonStyle;
-	colors: { normal: Vec4; active: Vec4; hover: Vec4 };
-	isEntered: boolean;
-	isPressed: boolean;
+```tsx {13-29}
+const onPaintPost = useCallback<IPlaceholderComponentProps['onPaintPost']>(
+    (sender: IPlaceholder, painter: IPainter, rect: Rect) => {
+        const { border, color, backgroundColor, font: fontStyle } = style;
 
-	...
+        const fontDesc = new FontDescription();
+        fontDesc.Name = fontStyle.family;
+        fontDesc.Size = fontStyle.size;
 
-	onPaint(sender: IPlaceholder, painter: IPainter, rect: Rect) {
-		const { border, color, backgroundColor } = this.style;
-		painter.SetFillColor(backgroundColor);
-		painter.FillRoundedRectangle(rect.x, rect.y, rect.w, rect.h, border.radius, border.radius);
-		painter.SetTextColor(color);
-		painter.DrawString(this.font, rect, this.text, DrawTextFlag.Center | DrawTextFlag.VCenter, this.text.length);
-	}
-}
+        const context = getAppContext();
+        const window = context.getWindow();
+        const font = new Byo2Font(window, fontDesc);
+
+        painter.SetFillColor(backgroundColor);
+        painter.FillRoundedRectangle(
+            rect.x,
+            rect.y,
+            rect.w,
+            rect.h,
+            border.radius,
+            border.radius,
+        );
+        painter.SetTextColor(color);
+        painter.DrawString(
+            font,
+            rect,
+            text,
+            DrawTextFlag.Center | DrawTextFlag.VCenter,
+            text.length,
+        );
+    },
+    [style, text],
+);
 ```
 
 #### 事件 {#button-event}
 
 例子中处理了 4 种事件：Enter & Leave, Press & Release:
 
-```ts {7-10}
-class Button {
-    ...
-	constructor(window: Window, text: string) {
-        ...
-		this.placeholder = new Placeholder(window);
-		this.placeholder.OnPaintPost(this.onPaint.bind(this));
-		this.placeholder.OnPointerEnter(this.onEnter.bind(this));
-		this.placeholder.OnPointerLeave(this.onLeave.bind(this));
-		this.placeholder.OnPointerPress(this.onPress.bind(this));
-		this.placeholder.OnPointerRelease(this.onRelease.bind(this));
-        ...
-		this.isEntered = false;
-		this.isPressed = false;
-	}
-
-	onEnter() {
-		this.isEntered = true;
-		this.style.backgroundColor = this.colors.hover;
-		this.placeholder.Redraw();
-	}
-
-	onPress() {
-		this.isPressed = true;
-		this.style.backgroundColor = this.colors.active;
-		this.placeholder.Redraw();
-	}
-
-	onRelease() {
-		this.isPressed = false;
-		this.style.backgroundColor = this.colors.normal;
-		this.placeholder.Redraw();
-	}
-
-	onLeave() {
-		this.isEntered = false;
-		if (!this.isPressed) {
-			this.style.backgroundColor = this.colors.normal;
-		}
-		this.placeholder.Redraw();
-	}
-}
+```tsx {4-7}
+return (
+    <Placeholder
+        onPaintPost={onPaintPost}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        onPointerPress={onPointerPress}
+        onPointerRelease={onPointerRelease}
+    />
+);
 ```
 
 #### 样式 {#button-style}
 
 样式是完全可定制的：
 
-```ts {14}
-class Button {
-	...
-	constructor(window: Window, text: string) {
-		this.text = text;
-
-        ...
-
-		this.colors = {
-			normal: new Vec4(24, 144, 255, 255),
-			hover: new Vec4(64, 169, 255, 255),
-			active: new Vec4(9, 109, 217, 255),
-		};
-
-		this.style = {
-			border: {
-				radius: 3,
-			},
-			color: new Vec4(255, 255, 255, 255),
-			backgroundColor: this.colors.normal,
-			font: {
-				size: 9,
-				family: ["Segoe UI", "Microsoft YaHei UI", "Meiryo UI", "SimSun-ExtB"],
-			},
-		};
-
-		const fontDesc = new FontDescription();
-		fontDesc.Name = this.style.font.family;
-		fontDesc.Size = this.style.font.size;
-		const font = new Byo2Font(window, fontDesc);
-		this.font = font;
-	}
-    ...
+```ts
+interface IButtonStyle {
+    border: {
+        radius: number;
+    };
+    color: Vec4;
+    backgroundColor: Vec4;
+    font: {
+        size: number;
+        family: string[];
+    };
 }
 ```
 
