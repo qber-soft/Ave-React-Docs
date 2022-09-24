@@ -11,60 +11,72 @@ TODO：以后添加对按钮的整体介绍。 -->
 
 ### 设置文案 {#example-set-text}
 
-```ts {5}
-import { Window, Button } from 'ave-ui';
-
-export function main(window: Window) {
-    const button = new Button(window);
-    button.SetText('Button');
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {5}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Button text="Button"></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 
-// 我们将待演示的控件放置于窗口中心，创建layout的代码是重复的，在之后的例子中将不再赘述。
-export function getControlDemoContainer(window: Window, count = 1) {
-    const container = new Grid(window);
-    container.ColAddSlice(1);
-    container.ColAddDpx(...Array.from<number>({ length: count }).fill(120));
-    container.ColAddSlice(1);
+// boilerplate code: place control at the center of window
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
 
-    container.RowAddSlice(1);
-    container.RowAddDpx(...Array.from<number>({ length: count }).fill(32));
-    container.RowAddSlice(1);
-    return container;
+function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '120dpx';
+    const height = props?.height ?? '32dpx';
+
+    const demoLayout = {
+        columns: `1 ${width} 1`,
+        rows: `1 ${height} 1`,
+        areas: {
+            center: { row: 1, column: 1 },
+        },
+    };
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.center }}>
+                {props.children}
+            </Grid>
+        </Grid>
+    );
 }
 ```
 
-我们使用`SetText`来设置按钮上的文案，运行之后：
+我们使用`text`来设置按钮上的文案，运行之后：
 
 ![button set text](./assets/button-set-text.png)
 
 #### API {#api-button-set-text}
 
 ```ts
-export interface IButton extends IControl {
-    SetText(text: string): IButton;
-    GetText(): string;
+export interface IButtonComponentProps extends IComponentProps {
+    text?: string;
+    ...
 }
 ```
 
 ### 设置文字颜色 {#example-set-text-color}
 
-```ts {7,8}
-import { Window, Button, Vec4 } from 'ave-ui';
-
-export function main(window: Window) {
-    const button = new Button(window);
-    button.SetText('Button');
-
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    button.SetTextColor(lightBlue);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {7}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Button
+                    text="Button"
+                    style={{ color: new Vec4(0, 146, 255, 255 * 0.75) }}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -75,35 +87,35 @@ export function main(window: Window) {
 #### API {#api-button-text-color}
 
 ```ts
-export interface IButton extends IControl {
-    SetTextColor(color: Vec4): IControl;
-    GetTextColor(): Vec4;
+export interface IButtonComponentProps extends IComponentProps {
+  style?: IButtonStyle;
+  ...
+}
+
+export interface IButtonStyle extends IComponentStyle {
+  color?: Vec4;
+  ...
 }
 ```
 
-### 样式 {#example-button-style}
+### 外观样式 {#example-button-visual-style}
 
-```ts {9,16}
-import { Window, Button, ButtonStyle } from 'ave-ui';
-
-export function main(window: Window) {
-    const container = getControlDemoContainer(window, 3);
-
-    {
-        const button = new Button(window);
-        button.SetText('Button');
-        button.SetButtonStyle(ButtonStyle.Command);
-        container.ControlAdd(button).SetGrid(1, 1);
-    }
-
-    {
-        const button = new Button(window);
-        button.SetText('Button');
-        button.SetButtonStyle(ButtonStyle.Push);
-        container.ControlAdd(button).SetGrid(3, 1);
-    }
-
-    window.SetContent(container);
+```tsx {7,11}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Button
+                    text="Button"
+                    style={{ visualStyle: ButtonStyle.Command }}
+                ></Button>
+                <Button
+                    text="Button"
+                    style={{ visualStyle: ButtonStyle.Push }}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -114,9 +126,9 @@ export function main(window: Window) {
 #### API {#api-button-style}
 
 ```ts
-export interface IButton extends IControl {
-    SetButtonStyle(style: ButtonStyle): IButton;
-    GetButtonStyle(): ButtonStyle;
+export interface IButtonStyle extends IComponentStyle {
+  visualStyle?: ButtonStyle;
+  ...
 }
 
 export enum ButtonStyle {
@@ -127,19 +139,20 @@ export enum ButtonStyle {
 
 ### 点击事件 {#example-button-event-click}
 
-```ts {6-8}
-import { Window, Button } from 'ave-ui';
+```tsx {9}
+export function App() {
+    const [text, setText] = useState('Button');
 
-export function main(window: Window) {
-    const button = new Button(window);
-    button.SetText('Button');
-    button.OnClick((sender) => {
-        sender.SetText('Button Clicked');
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout>
+                <Button
+                    text={text}
+                    onClick={() => setText('Button Clicked')}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -150,27 +163,50 @@ export function main(window: Window) {
 #### API {#api-button-event-click}
 
 ```ts
-export interface IButton extends IControl {
-    OnClick(callback: (sender: IButton) => void): IButton;
+export interface IButtonComponentProps extends IComponentProps {
+  onClick?: () => void;
+  ...
 }
 ```
 
 ### 设置图标 {#example-set-icon}
 
-> [examples/unit/app/app-resource](https://github.com/qber-soft/Ave-Nodejs/blob/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit/app/app-resource.ts)
+```tsx {14}
+import { iconResource } from './icon-resource';
 
-```ts {4,6-8}
-window.OnCreateContent((sender) => {
-    const button = new Button(window);
-    button.SetText('Open');
-    button.SetVisualTextLayout(VisualTextLayout.HorzVisualText);
+function onInit(app: App) {
+    const context = getAppContext();
+    context.setIconResource(iconResource as unknown as IIconResource);
+}
 
-    const iconSource = new IconSource(resMap.Open, 16);
-    const icon = window.CreateManagedIcon(iconSource);
-    button.SetVisual(icon);
-    ...
-    return true;
-});
+export function App() {
+    return (
+        <Window onInit={onInit}>
+            <DemoLayout>
+                <Button
+                    text="Open"
+                    iconInfo={{ name: 'open-file', size: 16 }}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
+}
+```
+
+```tsx title="icon-resource.ts"
+const iconResource = {
+    size: [16],
+    path: {
+        'open-file': [assetsPath('open-file#0.png')],
+    },
+} as const;
+
+export { iconResource };
+
+export type IconResourceMapType = Record<
+    keyof typeof iconResource.path,
+    number
+>;
 ```
 
 可以在文字旁边设置一个[图标](icon#introduction):
@@ -180,11 +216,11 @@ window.OnCreateContent((sender) => {
 #### API {#api-set-icon}
 
 ```ts
-export interface IButton extends IControl {
-    SetVisualTextLayout(n: VisualTextLayout): Button;
-    GetVisualTextLayout(): VisualTextLayout;
-
-    SetVisual(v: IVisual): IVisual;
-    GetVisual(): IVisual;
+export interface IButtonComponentProps extends IComponentProps {
+    iconInfo?: {
+        name: string;
+        size?: number;
+    };
+    ...
 }
 ```
