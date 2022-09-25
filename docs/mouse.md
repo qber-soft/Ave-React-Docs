@@ -7,8 +7,6 @@ title: Mouse
 
 ### Basic {#example-basic}
 
-> [examples/unit/mouse-event/event-basic.ts](https://github.com/qber-soft/Ave-Nodejs/blob/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit/mouse-event/event-basic.ts)
-
 ![mouse event basic](./assets/mouse-event-basic.gif)
 
 This example shows how to listen to basic mouse events:
@@ -18,51 +16,80 @@ This example shows how to listen to basic mouse events:
 -   Move
 -   Hover
 
-```ts {16,20,26,29,34,38}
-function formatMessagePointer(m: MessagePointer) {
-    return `pos: (${m.Position.x}, ${m.Position.y})`;
+```tsx
+function formatMessagePointer(mp: MessagePointer) {
+    return `pos: (${mp.Position.x}, ${mp.Position.y})`;
 }
 
-export function main(window: Window) {
-    const button = new Button(window);
-    let entered = false;
-    let pos = Vec2.Zero;
+export function TestMouseBasic() {
+    const [text, setText] = useState('out');
+    const refEntered = useRef(false);
+    const refPos = useRef(new Vec2(0, 0));
 
-    const updateButton = () =>
-        button.SetText(`${entered ? `at ${pos.x}, ${pos.y}` : 'out'}`);
+    const updateButton = () => {
+        setText(
+            `${
+                refEntered.current
+                    ? `at ${refPos.current.x}, ${refPos.current.y}`
+                    : 'out'
+            }`,
+        );
+    };
 
-    updateButton();
-
-    //
-    button.OnPointerEnter((sender, mp) => {
-        entered = true;
+    const onPointerEnter: IButtonComponentProps['onPointerEnter'] = () => {
+        refEntered.current = true;
         updateButton();
-    });
-    button.OnPointerLeave((sender, mp) => {
-        entered = false;
-        updateButton();
-    });
+    };
 
-    //
-    button.OnPointerPress((sender, mp) => {
-        console.log(`on press: ${formatMessagePointer(mp)}`);
-    });
-    button.OnPointerRelease((sender, mp) => {
-        console.log(`on release: ${formatMessagePointer(mp)}`);
-    });
-
-    //
-    button.OnPointerMove((sender, mp) => {
-        pos = mp.Position;
+    const onPointerLeave: IButtonComponentProps['onPointerLeave'] = () => {
+        refEntered.current = false;
         updateButton();
-    });
-    button.OnPointerHover((sender, mp) => {
+    };
+
+    const onPointerMove: IButtonComponentProps['onPointerMove'] = (
+        sender,
+        mp,
+    ) => {
+        refPos.current = mp.Position;
+        updateButton();
+    };
+
+    const onPointerHover: IButtonComponentProps['onPointerHover'] = (
+        sender,
+        mp,
+    ) => {
         console.log('on hover');
-    });
+    };
 
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+    const onPointerPress: IButtonComponentProps['onPointerPress'] = (
+        sender,
+        mp,
+    ) => {
+        console.log(`on press: ${formatMessagePointer(mp)}`);
+    };
+
+    const onPointerRelease: IButtonComponentProps['onPointerRelease'] = (
+        sender,
+        mp,
+    ) => {
+        console.log(`on release: ${formatMessagePointer(mp)}`);
+    };
+
+    return (
+        <Window>
+            <DemoLayout>
+                <Button
+                    text={text}
+                    onPointerRelease={onPointerRelease}
+                    onPointerPress={onPointerPress}
+                    onPointerHover={onPointerHover}
+                    onPointerMove={onPointerMove}
+                    onPointerEnter={onPointerEnter}
+                    onPointerLeave={onPointerLeave}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
