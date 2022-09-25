@@ -7,63 +7,36 @@ title: Theme
 
 ### Basic {#example-basic}
 
-```ts {15,17}
-import { Window, Button, ThemeImage, ThemePredefined_Dark } from 'ave-ui';
+```tsx
+export function App() {
+    const [isDark, setIsDark] = useState(false);
+    const switchTheme = () =>
+        setIsDark((prevTheme: boolean) => {
+            const isDarkTheme = !prevTheme;
+            const context = getAppContext();
+            const themeImage = context.getThemeImage();
+            if (isDarkTheme) {
+                const themeDark = new ThemePredefined_Dark();
+                themeDark.SetStyle(themeImage, 0); // switch to dark theme
+            } else {
+                themeImage.ResetTheme(); // reset to light theme
+            }
+            return isDarkTheme;
+        });
 
-export interface IThemeManager {
-    theme: ThemeImage;
-    themeDark: ThemePredefined_Dark;
-}
-
-export function main(window: Window, themeManager: IThemeManager) {
-    const button = new Button(window);
-    button.SetText('Toggling Themes');
-
-    let isDark = false;
-    button.OnClick((sender) => {
-        if (!isDark) {
-            themeManager.themeDark.SetStyle(themeManager.theme, 0); // switch to dark theme
-        } else {
-            themeManager.theme.ResetTheme(); // reset to light theme
-        }
-        isDark = !isDark;
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout>
+                <Button text="Toggling Themes" onClick={switchTheme}></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
 This example shows how to toggle theme:
 
 ![toggle theme](./assets/toggle-theme.gif)
-
-The creation of `themeManager`:
-
-```ts {3,7,9-10,16}
-export function run(main: Function) {
-    // ...
-    const theme = new ThemeImage();
-    if (!theme) process.exit(-1);
-
-    cpWindow.Theme = theme;
-    globalThis.theme = theme; // avoid GC
-
-    const themeDark = new ThemePredefined_Dark();
-    globalThis.themeDark = themeDark; // avoid GC
-
-    const window = new Window(cpWindow);
-    globalThis.window = window;
-
-    window.OnCreateContent((sender) => {
-        const themeManager = { theme, themeDark };
-        main(window, themeManager);
-        return true;
-    });
-    // ...
-}
-```
 
 #### API {#api-basic}
 
