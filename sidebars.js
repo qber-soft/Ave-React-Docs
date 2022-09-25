@@ -52,12 +52,12 @@ module.exports = {
         },
         'custom-component',
         'theme',
-        // {
-        //     type: 'category',
-        //     label: 'Event',
-        //     collapsed: true,
-        //     items: ['keyboard', 'mouse'],
-        // },
+        {
+            type: 'category',
+            label: 'Event',
+            collapsed: true,
+            items: ['keyboard', 'mouse'],
+        },
         'clipboard',
         'i18n',
     ],
