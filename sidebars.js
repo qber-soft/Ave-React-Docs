@@ -51,7 +51,7 @@ module.exports = {
             ],
         },
         'custom-component',
-        // 'theme',
+        'theme',
         // {
         //     type: 'category',
         //     label: 'Event',
