@@ -58,7 +58,7 @@ module.exports = {
         //     collapsed: true,
         //     items: ['keyboard', 'mouse'],
         // },
-        // 'clipboard',
+        'clipboard',
         // 'i18n',
     ],
 };

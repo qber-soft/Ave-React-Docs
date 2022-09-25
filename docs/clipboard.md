@@ -7,19 +7,14 @@ title: Clipboard
 
 ### Basic {#example-basic}
 
-> [examples/unit/clipboard/clipboard-basic.ts](https://github.com/qber-soft/Ave-Nodejs/blob/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit/clipboard/clipboard-basic.ts)
-
 This example shows how to read from clipboard:
 
 ![clipboard basic](./assets/clipboard-basic.gif)
 
-```ts {7,13}
-export function main(window: Window) {
-    const clipboard = AveGetClipboard();
-
-    const button = new Button(window);
-    button.SetText('Inspect Clipboard');
-    button.OnClick((sender) => {
+```tsx {3}
+export function App() {
+    const onInspectClipboard: IButtonComponentProps['onClick'] = () => {
+        const clipboard = AveGetClipboard();
         if (clipboard.HasImage()) {
             const aveImage = clipboard.GetImage();
             const imageData = aveImage.GetImage(0, 0, 0);
@@ -32,11 +27,18 @@ export function main(window: Window) {
         } else {
             console.log(`nothing found in clipboard`);
         }
-    });
+    };
 
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+    return (
+        <Window title="Clipboard Basic">
+            <DemoLayout>
+                <Button
+                    text="Inspect Clipboard"
+                    onClick={onInspectClipboard}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -75,5 +77,3 @@ export interface IClipboard {
     HasFile(): boolean;
 }
 ```
-
--   `AveImage`: see example in [examples/unit/picture/picture-codec.ts](https://github.com/qber-soft/Ave-Nodejs/blob/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit/picture/picture-codec.ts)
