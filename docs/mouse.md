@@ -21,7 +21,7 @@ function formatMessagePointer(mp: MessagePointer) {
     return `pos: (${mp.Position.x}, ${mp.Position.y})`;
 }
 
-export function TestMouseBasic() {
+export function App() {
     const [text, setText] = useState('out');
     const refEntered = useRef(false);
     const refPos = useRef(new Vec2(0, 0));
