@@ -24,7 +24,7 @@ module.exports = {
             items: [
                 'button',
                 // 'combo-box',
-                // 'label',
+                'label',
                 // 'text-box',
                 // 'list-box',
                 // 'rich-list-box',

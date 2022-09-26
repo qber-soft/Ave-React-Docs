@@ -7,21 +7,21 @@ title: Label
 
 ### Set Text {#example-set-text}
 
-```ts {4-5}
-import { Window, Label, Vec4, Grid } from 'ave-ui';
-
-export function main(window: Window) {
-    const label = new Label(window);
-    label.SetText('Label');
-
-    const backgroundGrid = new Grid(window);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    backgroundGrid.SetBackColor(lightBlue).ColAddSlice(1).RowAddSlice(1);
-    backgroundGrid.ControlAdd(label).SetGrid(0, 0);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(backgroundGrid).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {10}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Grid
+                    style={{
+                        backgroundColor: new Vec4(0, 146, 255, 255 * 0.75),
+                    }}
+                >
+                    <Label text="Label"></Label>
+                </Grid>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -34,74 +34,98 @@ As we can see, by default, the label text is aligned to the left.
 #### API {#api-label-set-text}
 
 ```ts
-export class Label {
-    SetText(text: string): Label;
+export interface ILabelComponentProps extends IComponentProps {
+    text?: string;
 }
 ```
 
 ### Background Color {#example-set-background-color}
 
-```ts {7-8}
-import { Window, Label, Vec4 } from 'ave-ui';
-
-export function main(window: Window) {
-    const label = new Label(window);
-    label.SetText('Label');
-
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    label.SetBackColor(lightBlue);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(label).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {8}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Label
+                    text="Label"
+                    style={{
+                        backgroundColor: new Vec4(0, 146, 255, 255 * 0.75),
+                    }}
+                ></Label>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
 #### API {#api-label-set-background-color}
 
 ```ts
-export class Label {
-    SetBackColor(color: Vec4): Label;
+export interface ILabelComponentProps extends IComponentProps {
+    style?: ILabelStyle;
+}
+
+export interface ILabelStyle extends IComponentStyle {
+    backgroundColor?: Vec4;
 }
 ```
 
 ### Alignment {#example-text-align}
 
-```ts {10,19,28}
-import { Window, Label, Vec4, AlignType } from 'ave-ui';
+```tsx {8,14,19}
+export function App() {
+    const backgroundColor = new Vec4(0, 146, 255, 255 * 0.75);
+    return (
+        <Window>
+            <DemoLayout>
+                <Label
+                    text="Label"
+                    style={{ backgroundColor, horizontalAlign: AlignType.Near }}
+                ></Label>
+                <Label
+                    text="Label"
+                    style={{
+                        backgroundColor,
+                        horizontalAlign: AlignType.Center,
+                    }}
+                ></Label>
+                <Label
+                    text="Label"
+                    style={{ backgroundColor, horizontalAlign: AlignType.Far }}
+                ></Label>
+            </DemoLayout>
+        </Window>
+    );
+}
 
-export function main(window: Window) {
-    const container = getControlDemoContainer(window, 5);
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
 
-    {
-        const label = new Label(window);
-        label.SetText('Label');
-        label.SetAlignHorz(AlignType.Near);
-        label.SetBackColor(lightBlue);
+function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '120dpx';
+    const height = props?.height ?? '32dpx';
 
-        container.ControlAdd(label).SetGrid(1, 3);
-    }
+    const demoLayout = {
+        columns: `1 ${width} ${width} ${width} ${width} ${width} 1`,
+        rows: `1 ${height} 1`,
+        areas: {
+            left: { row: 1, column: 1 },
+            middle: { row: 1, column: 3 },
+            right: { row: 1, column: 5 },
+        },
+    };
+    const [left, middle, right] = props.children;
 
-    {
-        const label = new Label(window);
-        label.SetText('Label');
-        label.SetAlignHorz(AlignType.Center);
-        label.SetBackColor(lightBlue);
-
-        container.ControlAdd(label).SetGrid(3, 3);
-    }
-
-    {
-        const label = new Label(window);
-        label.SetText('Label');
-        label.SetAlignHorz(AlignType.Far);
-        label.SetBackColor(lightBlue);
-
-        container.ControlAdd(label).SetGrid(5, 3);
-    }
-
-    window.SetContent(container);
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.left }}>{left}</Grid>
+            <Grid style={{ area: demoLayout.areas.middle }}>{middle}</Grid>
+            <Grid style={{ area: demoLayout.areas.right }}>{right}</Grid>
+        </Grid>
+    );
 }
 ```
 
@@ -116,36 +140,29 @@ There are 3 ways to align text:
 #### API {#api-label-text-align}
 
 ```ts
-export class Label {
-    SetAlignHorz(align: Vec4): Label;
-}
-
-export enum AlignType {
-    Near,
-    Center,
-    Far,
+export interface ILabelStyle extends IComponentStyle {
+    horizontalAlign?: AlignType;
 }
 ```
 
 ### Text Color {#example-set-text-color}
 
-```ts {7-8}
-import { Window, Label, Vec4, AlignType } from 'ave-ui';
-
-export function main(window: Window) {
-    const label = new Label(window);
-    label.SetText('Label');
-
-    const white = new Vec4(255, 255, 255, 255);
-    label.SetTextColor(white);
-
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    label.SetBackColor(lightBlue);
-    label.SetAlignHorz(AlignType.Center);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(label).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {10}
+export function App() {
+    return (
+        <Window title="Label Text Color">
+            <DemoLayout>
+                <Label
+                    text="Label"
+                    style={{
+                        horizontalAlign: AlignType.Center,
+                        backgroundColor: new Vec4(0, 146, 255, 255 * 0.75),
+                        color: new Vec4(255, 255, 255, 255),
+                    }}
+                ></Label>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -156,7 +173,7 @@ Set text color:
 #### API {#api-label-set-text-color}
 
 ```ts
-export class Label {
-    SetTextColor(color: Vec4): Label;
+export interface ILabelStyle extends IComponentStyle {
+    color?: Vec4;
 }
 ```
