@@ -150,7 +150,7 @@ export interface ILabelStyle extends IComponentStyle {
 ```tsx {10}
 export function App() {
     return (
-        <Window title="Label Text Color">
+        <Window>
             <DemoLayout>
                 <Label
                     text="Label"
