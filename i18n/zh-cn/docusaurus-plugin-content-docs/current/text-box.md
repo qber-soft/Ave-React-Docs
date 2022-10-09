@@ -11,19 +11,20 @@ TODO：以后添加对文本框的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {5}
-import { Window, TextBox } from 'ave-ui';
-
-export function main(window: Window) {
-    const textBox = new TextBox(window);
-    textBox.OnChange((sender, reason) => {
-        console.log(reason);
-        console.log(sender.GetText());
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(textBox).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {6-9}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <TextBox
+                    onChange={(sender, reason) => {
+                        console.log(reason);
+                        console.log(sender.GetText());
+                    }}
+                ></TextBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -48,29 +49,15 @@ abc12
 abc123
 ```
 
-这是因为`textBox.OnChange`，我们设置了一个回调，当文本框中的内容发生改变时，我们可以打印出改变的原因，以及当前文本框内容。
+这是因为`onChange`，我们设置了一个回调，当文本框中的内容发生改变时，我们可以打印出改变的原因，以及当前文本框内容。
 
 #### API {#api-text-box-basic}
 
 <!-- // TODO: 添加其它改变原因的例子和文档 -->
 
 ```ts
-export enum TextBoxChangeReason {
-    Input, // 0: 输入
-    UpDown,
-    Reset,
-    Spin,
-    SpinCommit,
-    SpinCancel,
-}
-
-export class TextBox {
-    SetText(text: string): TextBox;
-    GetText(): string;
-
-    OnChange(
-        callback: (sender: TextBox, reason: TextBoxChangeReason) => void,
-    ): TextBox;
+export interface ITextBoxComponentProps extends IComponentProps {
+    onChange?: Parameters<ITextBox['OnChange']>[0];
 }
 ```
 
@@ -78,38 +65,45 @@ export class TextBox {
 
 默认情况下，文本框中只能输入英文字符和数字，如果想使用输入法来输入中文或其它字符，需要设置 IME(input method)：
 
-```ts {9,15}
-import { Window, TextBox } from 'ave-ui';
+```tsx {5-6}
+export function App() {
+	return (
+		<Window>
+			<DemoLayout>
+				<TextBox></TextBox>
+				<TextBox ime></TextBox>
+			</DemoLayout>
+		</Window>
+	);
+}
 
-export function main(window: Window) {
-    const container = getControlDemoContainer(window, 3);
-
-    {
-        // 默认情况下是禁用输入法的
-        const textBox = new TextBox(window);
-        console.log(textBox.GetIme()); // 预期是false
-        container.ControlAdd(textBox).SetGrid(1, 1);
-    }
-
-    {
-        const textBox = new TextBox(window);
-        textBox.SetIme(true);
-        container.ControlAdd(textBox).SetGrid(3, 1);
-    }
-
-    window.SetContent(container);
+function DemoLayout(props: { children?: any[] }) {
+	const demoLayout = {
+		columns: `1 120dpx 120dpx 120dpx 1`,
+		rows: `1 32dpx 1`,
+		areas: {
+			left: { row: 1, column: 1 },
+			right: { row: 1, column: 3 },
+		},
+	};
+	const [left, right] = props.children;
+	return (
+		<Grid style={{ layout: demoLayout }}>
+			<Grid style={{ area: demoLayout.areas.left }}>{left}</Grid>
+			<Grid style={{ area: demoLayout.areas.right }}>{right}</Grid>
+		</Grid>
+	);
 }
 ```
 
-在这个例子中，我们对比演示了在文本框中使用输入法进行输入，同样是敲击键盘“z”，在禁用了输入法的文本框中，我们只能输入字符“z”，作为对比，调用`SetIme`启用输入法的情况下，我们输入了中文字符“在”：
+在这个例子中，我们对比演示了在文本框中使用输入法进行输入，同样是敲击键盘“z”，在禁用了输入法的文本框中，我们只能输入字符“z”，作为对比，设置`ime`启用输入法的情况下，我们输入了中文字符“在”：
 
 ![text box ime](./assets/text-box-ime.gif)
 
 #### API {#api-text-box-ime}
 
 ```ts
-export class TextBox {
-    SetIme(useIme: boolean): TextBox;
-    GetIme(): boolean;
+export interface ITextBoxComponentProps extends IComponentProps {
+  ime?: boolean;
 }
 ```

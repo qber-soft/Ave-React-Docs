@@ -161,8 +161,7 @@ Click and set text:
 
 ```ts
 export interface IButtonComponentProps extends IComponentProps {
-  onClick?: () => void;
-  ...
+  onClick?: Parameters<IButton["OnClick"]>[0];
 }
 ```
 
