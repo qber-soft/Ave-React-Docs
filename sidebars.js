@@ -25,7 +25,7 @@ module.exports = {
                 'button',
                 // 'combo-box',
                 'label',
-                // 'text-box',
+                'text-box',
                 // 'list-box',
                 // 'rich-list-box',
                 // 'progress',
