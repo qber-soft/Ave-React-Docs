@@ -29,7 +29,7 @@ Usage:
 ```ts
 export interface IImageComponentProps extends IComponentProps {
 	/**
-	 * absolute path of image file
+	 * absolute path of image file or AveImage instance
 	 */
 	src: string | AveImage;
 }

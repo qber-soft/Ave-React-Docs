@@ -11,20 +11,16 @@ TODO：以后添加对图片的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {4-5,8}
-import { Window, Picture, ResourceSource } from 'ave-ui';
-import * as fs from 'fs';
-import * as path from 'path';
-
-export function main(window: Window) {
-    const picture = new Picture(window);
-    const buffer = fs.readFileSync(path.resolve(__dirname, './Clock#6.png'));
-    const source = ResourceSource.FromBuffer(buffer);
-    picture.SetPicture(source);
-
-    const container = getControlDemoContainer(window, 1, 300, 300);
-    container.ControlAdd(picture).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {2,6}
+export function App() {
+    const src = assetsPath('Clock#6.png');
+    return (
+        <Window>
+            <DemoLayout width="1" height="1">
+                <Image src={src} />
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -35,25 +31,10 @@ export function main(window: Window) {
 #### API {#api-basic}
 
 ```ts
-export interface IPicture extends IVisual {
-    // 设置图片来源
-    SetPicture(rs: ResourceSource): Picture;
-}
-
-export class ResourceSource {
-    Type: ResourceSourceType = ResourceSourceType.Resource;
-    ResourceId: number = 0;
-    InMemory: InMemoryData = new InMemoryData();
-
-    static FromBuffer(
-        buffer: Buffer,
-        rowPitch: number = 0,
-        slicePitch: number = 0,
-    );
-}
-
-export enum ResourceSourceType {
-    Resource,
-    InMemory,
+export interface IImageComponentProps extends IComponentProps {
+	/**
+	 * 图片文件的绝对路径 或 AveImage
+	 */
+	src: string | AveImage;
 }
 ```
