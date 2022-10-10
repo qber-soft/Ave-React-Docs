@@ -1,13 +1,17 @@
 ---
-id: picture
-title: Picture
+id: image
+title: Image 图片
 ---
 
-## Examples {#examples}
+<!-- ## 简介 {#introduction}
 
-### Basic {#example-basic}
+TODO：以后添加对图片的整体介绍。 -->
 
-```ts {6,8-9}
+## 例子 {#examples}
+
+### 基本用法 {#example-basic}
+
+```ts {4-5,8}
 import { Window, Picture, ResourceSource } from 'ave-ui';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -24,7 +28,7 @@ export function main(window: Window) {
 }
 ```
 
-Usage:
+这个例子演示了如何显示一张图片：
 
 ![picture basic](./assets/picture-basic.png)
 
@@ -32,7 +36,7 @@ Usage:
 
 ```ts
 export interface IPicture extends IVisual {
-    //
+    // 设置图片来源
     SetPicture(rs: ResourceSource): Picture;
 }
 
