@@ -46,7 +46,7 @@ module.exports = {
                 // 'radio-box',
                 // 'track-bar',
                 // 'tree',
-                // 'picture',
+                'image',
                 // 'icon',
             ],
         },
