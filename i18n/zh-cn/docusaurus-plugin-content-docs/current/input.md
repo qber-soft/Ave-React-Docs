@@ -11,32 +11,36 @@ TODO：以后添加对输入框的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {7,13}
-import { Window, Button } from 'ave-ui';
+```tsx {11-23}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Button
+                    text="Button"
+                    onClick={async () => {
+                        const context = getAppContext();
+                        const window = context.getWindow();
 
-export function main(window: Window) {
-    const button = new Button(window);
-    button.SetText('Button');
-    button.OnClick((sender) => {
-        const commonUi = window.GetCommonUi();
-        const label = 'Please input:';
-        const placeHolder = 'input here';
-        const title = 'Title';
-        const value = 'default input';
-        const fallback = 'input cancelled';
-        const result = commonUi.Input(
-            fallback,
-            label,
-            value,
-            placeHolder,
-            title,
-        );
-        console.log(`input result: "${result}"`);
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+                        const commonUi = window.GetCommonUi();
+                        const label = 'Please input:';
+                        const placeHolder = 'input here';
+                        const title = 'Title';
+                        const value = 'default input';
+                        const fallback = 'input cancelled';
+                        const result = await commonUi.Input(
+                            fallback,
+                            label,
+                            value,
+                            placeHolder,
+                            title,
+                        );
+                        console.log(`input result: "${result}"`);
+                    }}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -63,11 +67,11 @@ input result: "input cancelled"
 ```ts
 export interface ICommonUi {
     Input(
-        fallback: string,
-        label: string,
-        value: string,
-        placeHolder: string,
-        title: string,
-    ): string;
+        s: string,
+        sMain: string,
+        sDetail: string,
+        sCue: string,
+        sTitle: string,
+    ): Promise<string>;
 }
 ```

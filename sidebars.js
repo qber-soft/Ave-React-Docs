@@ -8,11 +8,7 @@
  */
 
 module.exports = {
-    docs: [
-        'introduction', 
-        'getting-started', 
-        'development'
-    ],
+    docs: ['introduction', 'getting-started', 'development'],
     components: [
         'components',
         'window',
@@ -30,12 +26,12 @@ module.exports = {
                 // 'rich-list-box',
                 // 'progress',
                 // 'check-box',
-                // {
-                //     type: 'category',
-                //     label: 'CommonUi',
-                //     collapsed: false,
-                //     items: ['message-box', 'input', 'color-picker'],
-                // },
+                {
+                    type: 'category',
+                    label: 'CommonUi',
+                    collapsed: false,
+                    items: ['message-box', 'input', 'color-picker'],
+                },
                 // 'scroll-bar',
                 // 'status-bar',
                 // 'calendar',
