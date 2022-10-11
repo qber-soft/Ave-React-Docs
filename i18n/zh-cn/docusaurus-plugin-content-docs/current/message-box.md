@@ -11,27 +11,33 @@ TODO：以后添加对消息框的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {7-14}
-import { Window, MessageIcon, MessageButton, Button } from 'ave-ui';
+```tsx {11-18}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Button
+                    text="Button"
+                    onClick={async () => {
+                        const context = getAppContext();
+                        const window = context.getWindow();
 
-export function main(window: Window) {
-    const button = new Button(window);
-    button.SetText('Button');
-    button.OnClick((sender) => {
-        const commonUi = window.GetCommonUi();
-        const result = commonUi.Message(
-            'Message',
-            'This is a message',
-            MessageIcon.Infomation,
-            MessageButton.YesNo,
-            'Title',
-        );
-        console.log(`message result: ${result}(${MessageResult[result]})`);
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(button).SetGrid(1, 1);
-    window.SetContent(container);
+                        const commonUi = window.GetCommonUi();
+                        const result = await commonUi.Message(
+                            'Message',
+                            'This is a message',
+                            MessageIcon.Infomation,
+                            MessageButton.YesNo,
+                            'Title',
+                        );
+                        console.log(
+                            `message result: ${result}(${MessageResult[result]})`,
+                        );
+                    }}
+                ></Button>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -56,19 +62,19 @@ export interface IWindow extends IControl {
 
 export interface ICommonUi {
     /**
-     * main: 消息的概要
-     * detail：消息的详细内容
-     * icon：消息的图标
-     * buttonType：消息框中的按钮类型
-     * title：消息框的标题
+     * sMain: 消息的概要
+     * sDetail：消息的详细内容
+     * nIcon：消息的图标
+     * nButton：消息框中的按钮类型
+     * sTitle：消息框的标题
      */
     Message(
-        main: string,
-        detail: string,
-        icon: MessageIcon,
-        buttonType: MessageButton,
-        title: string,
-    ): MessageResult;
+        sMain: string,
+        sDetail: string,
+        nIcon: MessageIcon,
+        nButton: MessageButton,
+        sTitle: string,
+    ): Promise<MessageResult>;
 }
 
 export enum MessageIcon {
