@@ -11,22 +11,26 @@ TODO：以后添加对下拉列表的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {4-9}
-import { Window, ComboBox } from 'ave-ui';
-
-export function main(window: Window) {
-    const comboBox = new ComboBox(window);
-    // 添加下拉列表项，从第一个开始依次为a、b、c
-    comboBox.Append('a', 'b', 'c');
-    // 选择第一个（相当于默认显示"a"）
-    comboBox.Select(0);
-    comboBox.OnSelectionChange((comboBox: ComboBox) => {
-        console.log(`current index: ${comboBox.GetSelection()}`);
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(comboBox).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    const options: IComboBoxComponentProps['options'] = [
+        { key: '1', text: 'a' },
+        { key: '2', text: 'b' },
+        { key: '3', text: 'c' },
+    ];
+    return (
+        <Window title="ComboBox Basic">
+            <DemoLayout>
+                <ComboBox
+                    options={options}
+                    defaultSelectedKey="1"
+                    onChange={(sender) => {
+                        console.log(`current index: ${sender.GetSelection()}`);
+                    }}
+                ></ComboBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -45,20 +49,18 @@ current index: 0
 #### API {#api-combo-box-basic}
 
 ```ts
-export interface IComboBox extends IControl {
-    // 添加列表项，最后显示顺序就是这里的添加顺序
-    Append(...items: string[]): IComboBox;
+export interface IComboBoxComponentProps extends IComponentProps {
+    options: IComboBoxOption[];
+    defaultSelectedKey?: string;
+    onChange?: Parameters<IComboBox['OnSelectionChange']>[0];
+}
 
-    // 选中某一项，这里的index是指添加列表项时候的顺序
-    Select(index: number): IComboBox;
-    // 获取当前选中的列表项的index
-    GetSelection(): number;
-
-    // 当选择列表项的时候触发回调
-    OnSelectionChange(callback: (sender: IComboBox) => void): IComboBox;
+export interface IComboBoxOption {
+    key: string;
+    text: string;
 }
 ```
 
-默认情况下，下拉列表不会默认选中任何列表项。所以，在以上例子中，如果没有调用`comboBox.Select(0)`，下拉列表显示是这样的:
+默认情况下，下拉列表不会默认选中任何列表项。所以，在以上例子中，如果没有设置`defaultSelectedKey`，下拉列表显示是这样的:
 
 ![combo box default selection](./assets/combo-box-default-selection.gif)
