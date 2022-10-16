@@ -24,7 +24,7 @@ module.exports = {
                 'text-box',
                 // 'list-box',
                 // 'rich-list-box',
-                // 'progress',
+                'progress',
                 // 'check-box',
                 {
                     type: 'category',
