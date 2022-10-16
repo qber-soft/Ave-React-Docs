@@ -128,7 +128,7 @@ export function App() {
     useEffect(() => {
         setInterval(() => {
             if (value < 100) {
-                setValue((prev) => prev + 1);
+                setValue((prev) => prev + 1); // step is 1
             }
         }, 100);
     }, []);

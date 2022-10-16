@@ -16,29 +16,41 @@ TODO：以后添加对进度条的整体介绍。
 
 ### 基本用法 {#example-basic}
 
-```ts {5-6}
-import { Window, ProgressBar, Grid } from 'ave-ui';
-
-export function main(window: Window) {
-    const progressBar = new ProgressBar(window);
-    progressBar.SetMaximum(100).SetAnimation(true);
-    progressBar.SetValue(75);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(progressBar).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Progress value={75} max={100} animation></Progress>
+            </DemoLayout>
+        </Window>
+    );
 }
 
-function getControlDemoContainer(window: Window, count = 1) {
-    const container = new Grid(window);
-    container.ColAddSlice(1);
-    container.ColAddDpx(...Array.from<number>({ length: count }).fill(240));
-    container.ColAddSlice(1);
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
 
-    container.RowAddSlice(1);
-    container.RowAddDpx(...Array.from<number>({ length: count }).fill(32));
-    container.RowAddSlice(1);
-    return container;
+function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '240dpx';
+    const height = props?.height ?? '32dpx';
+
+    const demoLayout = {
+        columns: `1 ${width} 1`,
+        rows: `1 ${height} 1`,
+        areas: {
+            center: { row: 1, column: 1 },
+        },
+    };
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.center }}>
+                {props.children}
+            </Grid>
+        </Grid>
+    );
 }
 ```
 
@@ -46,41 +58,36 @@ function getControlDemoContainer(window: Window, count = 1) {
 
 ![progress basic](./assets/progress-basic.gif)
 
-其中`SetAnimation`设置的动画是进度条中光影的流动。
+其中`animation`设置的动画是进度条中光影的流动。
 
 #### API {#api-basic}
 
 ```ts
-export interface IProgressBar extends IControl {
-    SetMaximum(value: number): ProgressBar;
-    GetMaximum(): number;
-
-    SetValue(value: number): ProgressBar;
-    GetValue(): number;
-
-    SetAnimation(enableAnimation: boolean): ProgressBar;
-
-    // 是否启用了动画效果
-    GetAnimation(): boolean;
+export interface IProgressComponentProps extends IComponentProps {
+    value: number;
+    max?: number;
+    animation?: boolean;
 }
 ```
 
 ### 状态 {#example-state}
 
-通过 `SetState` 可以设置进度条状态:
+通过 `state` 可以设置进度条状态:
 
-```ts {7}
-import { Window, ProgressBar, Grid, ProgressBarState } from 'ave-ui';
-
-export function main(window: Window) {
-    const progressBar = new ProgressBar(window);
-    progressBar.SetMaximum(100).SetAnimation(true);
-    progressBar.SetValue(75);
-    progressBar.SetState(ProgressBarState.Normal);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(progressBar).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx {9}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Progress
+                    value={75}
+                    max={100}
+                    animation
+                    state={ProgressBarState.Normal}
+                ></Progress>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -91,7 +98,8 @@ export function main(window: Window) {
         { label: 'Paused', value: 'paused' },
         { label: 'Error', value: 'error' },
         { label: 'Pulse', value: 'pulse' },
-    ]}>
+    ]}
+>
     <TabItem value="normal">
         <img src={require('./assets/progress-basic.gif').default} />
     </TabItem>
@@ -129,44 +137,26 @@ ProgressBarState None: // Only for IWindowTaskbar, TODO: 之后添加相关文�
 
 ### 步长（每次增加多少） {#example-step}
 
-```ts
-import { Window, ProgressBar, Grid } from 'ave-ui';
-
-export function main(window: Window) {
-    const progressBar = new ProgressBar(window);
-    progressBar.SetMaximum(100).SetAnimation(true);
-
-    // 从0开始增长
-    progressBar.SetValue(0);
-
-    // 每次增加1
-    progressBar.SetStep(1);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(progressBar).SetGrid(1, 1);
-    window.SetContent(container);
-
-    const id = setInterval(() => {
-        if (progressBar.GetValue() < 100) {
-            // 每隔100ms就增长一次
-            progressBar.Step();
-        } else {
-            clearInterval(id);
-        }
-    }, 100);
+```tsx
+export function App() {
+    const [value, setValue] = useState(0);
+    useEffect(() => {
+        setInterval(() => {
+            if (value < 100) {
+                setValue((prev) => prev + 1); // step is 1
+            }
+        }, 100);
+    }, []);
+    return (
+        <Window>
+            <DemoLayout>
+                <Progress value={value}></Progress>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
 这个例子演示了怎样实现通常我们看到的“进度条不断增长”的效果：
 
 ![progress step](./assets/progress-step.gif)
-
-#### API {#api-step}
-
-```ts
-export interface IProgressBar extends IControl {
-    SetStep(value: number): ProgressBar;
-    GetStep(): number;
-    Step(): ProgressBar;
-}
-```
