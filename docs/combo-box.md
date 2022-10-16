@@ -7,22 +7,26 @@ title: ComboBox
 
 ### Basic {#example-basic}
 
-```ts {4-9}
-import { Window, ComboBox } from 'ave-ui';
-
-export function main(window: Window) {
-    const comboBox = new ComboBox(window);
-    // add items
-    comboBox.Append('a', 'b', 'c');
-    // display the first one: a
-    comboBox.Select(0);
-    comboBox.OnSelectionChange((comboBox: ComboBox) => {
-        console.log(`current index: ${comboBox.GetSelection()}`);
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(comboBox).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    const options: IComboBoxComponentProps['options'] = [
+        { key: '1', text: 'a' },
+        { key: '2', text: 'b' },
+        { key: '3', text: 'c' },
+    ];
+    return (
+        <Window title="ComboBox Basic">
+            <DemoLayout>
+                <ComboBox
+                    options={options}
+                    defaultSelectedKey="1"
+                    onChange={(sender) => {
+                        console.log(`current index: ${sender.GetSelection()}`);
+                    }}
+                ></ComboBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -41,20 +45,18 @@ current index: 0
 #### API {#api-combo-box-basic}
 
 ```ts
-export interface IComboBox extends IControl {
-    // add items, and they are displayed in the order you add them
-    Append(...items: string[]): IComboBox;
+export interface IComboBoxComponentProps extends IComponentProps {
+    options: IComboBoxOption[];
+    defaultSelectedKey?: string;
+    onChange?: Parameters<IComboBox['OnSelectionChange']>[0];
+}
 
-    // index is 0-based
-    Select(index: number): IComboBox;
-    // get index of current item
-    GetSelection(): number;
-
-    // invoked when you select item
-    OnSelectionChange(callback: (sender: IComboBox) => void): IComboBox;
+export interface IComboBoxOption {
+    key: string;
+    text: string;
 }
 ```
 
-There is no default selected item, remove `comboBox.Select(0)` then we will get this:
+There is no default selected item, remove `defaultSelectedKey` then we will get this:
 
 ![combo box default selection](./assets/combo-box-default-selection.gif)

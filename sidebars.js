@@ -19,7 +19,7 @@ module.exports = {
             collapsed: true,
             items: [
                 'button',
-                // 'combo-box',
+                'combo-box',
                 'label',
                 'text-box',
                 // 'list-box',
