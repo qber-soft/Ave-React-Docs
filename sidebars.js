@@ -25,7 +25,7 @@ module.exports = {
                 // 'list-box',
                 // 'rich-list-box',
                 'progress',
-                // 'check-box',
+                'check-box',
                 {
                     type: 'category',
                     label: 'CommonUi',

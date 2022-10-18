@@ -7,20 +7,23 @@ title: CheckBox
 
 ### Basic {#example-basic}
 
-```ts {5-6}
-import { Window, CheckBox, CheckValue } from 'ave-ui';
-
-export function main(window: Window) {
-    const checkBox = new CheckBox(window);
-    checkBox.SetText('Apple');
-    checkBox.OnCheck((sender: CheckBox) => {
-        const checkValue = sender.GetValue();
-        console.log(`check value: ${checkValue}(${CheckValue[checkValue]})`);
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(checkBox).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <CheckBox
+                    text="Apple"
+                    onCheck={(sender) => {
+                        const checkValue = sender.GetValue();
+                        console.log(
+                            `check value: ${checkValue}(${CheckValue[checkValue]})`,
+                        );
+                    }}
+                ></CheckBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -37,17 +40,29 @@ check value: 1(Checked)
 check value: 0(Unchecked)
 ```
 
-Return false in `OnChecking` to cancel action. `OnCheck` will not be invoked in this case.
+Return false in `onChecking` to cancel action. `onCheck` will not be invoked in this case.
 
-```ts {2-4}
-checkBox.SetText('Apple');
-checkBox.OnChecking((sender: CheckBox) => {
-    return false;
-});
-checkBox.OnCheck((sender: CheckBox) => {
-    const checkValue = sender.GetValue();
-    console.log(`check value: ${checkValue}(${CheckValue[checkValue]})`);
-});
+```tsx {14}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <CheckBox
+                    text="Apple"
+                    onCheck={(sender) => {
+                        const checkValue = sender.GetValue();
+                        console.log(
+                            `check value: ${checkValue}(${CheckValue[checkValue]})`,
+                        );
+                    }}
+                    onChecking={(sender) => {
+                        return false;
+                    }}
+                ></CheckBox>
+            </DemoLayout>
+        </Window>
+    );
+}
 ```
 
 ![check box on checking](./assets/check-box-on-checking.gif)
@@ -55,15 +70,10 @@ checkBox.OnCheck((sender: CheckBox) => {
 #### API {#api-basic}
 
 ```ts
-export interface ICheckBox extends IControl {
-    SetText(text: string): CheckBox;
-    GetText(): string;
-
-    SetValue(value: CheckValue): CheckBox;
-    GetValue(): CheckValue;
-
-    OnCheck(callback: (sender: CheckBox) => void): CheckBox;
-    OnChecking(callback: (sender: CheckBox) => boolean): CheckBox;
+export interface ICheckBoxComponentProps extends IComponentProps {
+    text: string;
+    onCheck?: Parameters<ICheckBox['OnCheck']>[0];
+    onChecking?: Parameters<ICheckBox['OnChecking']>[0];
 }
 
 export enum CheckValue {
@@ -75,29 +85,53 @@ export enum CheckValue {
 
 ### Style {#example-style}
 
-```ts {9,17}
-import { Window, CheckBox, CheckBoxStyle } from 'ave-ui';
+```tsx {8,14}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <CheckBox
+                    text="Apple"
+                    style={{
+                        visualStyle: CheckBoxStyle.Checking,
+                    }}
+                ></CheckBox>
+                <CheckBox
+                    text="Apple"
+                    style={{
+                        visualStyle: CheckBoxStyle.Pushing,
+                    }}
+                ></CheckBox>
+            </DemoLayout>
+        </Window>
+    );
+}
 
-export function main(window: Window) {
-    const container = getControlDemoContainer(window, 3);
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
 
-    {
-        const checkBox = new CheckBox(window);
-        checkBox.SetText('Apple');
-        checkBox.SetCheckBoxStyle(CheckBoxStyle.Checking);
+function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '120dpx';
+    const height = props?.height ?? '32dpx';
 
-        container.ControlAdd(checkBox).SetGrid(1, 1);
-    }
-
-    {
-        const checkBox = new CheckBox(window);
-        checkBox.SetText('Apple');
-        checkBox.SetCheckBoxStyle(CheckBoxStyle.Pushing);
-
-        container.ControlAdd(checkBox).SetGrid(3, 1);
-    }
-
-    window.SetContent(container);
+    const demoLayout = {
+        columns: `1 ${width} ${width} ${width} 1`,
+        rows: `1 ${height} 1`,
+        areas: {
+            left: { row: 1, column: 1 },
+            right: { row: 1, column: 3 },
+        },
+    };
+    const [left, right] = props.children;
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.left }}>{left}</Grid>
+            <Grid style={{ area: demoLayout.areas.right }}>{right}</Grid>
+        </Grid>
+    );
 }
 ```
 
@@ -108,9 +142,12 @@ Check box in button style:
 #### API {#api-style}
 
 ```ts
-export interface ICheckBox extends IControl {
-    SetCheckBoxStyle(style: CheckBoxStyle): CheckBox;
-    GetCheckBoxStyle(): CheckBoxStyle;
+export interface ICheckBoxComponentProps extends IComponentProps {
+    style?: ICheckBoxStyle;
+}
+
+export interface ICheckBoxStyle extends IComponentStyle {
+    visualStyle?: CheckBoxStyle;
 }
 
 export enum CheckBoxStyle {
@@ -121,30 +158,20 @@ export enum CheckBoxStyle {
 
 ### Status {#example-triple}
 
-```ts {9,17}
-import { Window, CheckBox, CheckBoxStyle } from 'ave-ui';
-
-export function main(window: Window) {
-    const container = getControlDemoContainer(window, 3);
-
-    {
-        const checkBox = new CheckBox(window);
-        checkBox.SetText('Check all');
-        checkBox.SetTriple(true);
-
-        container.ControlAdd(checkBox).SetGrid(1, 1);
-    }
-
-    {
-        const checkBox = new CheckBox(window);
-        checkBox.SetText('Check all');
-        checkBox.SetTriple(true);
-        checkBox.SetCheckBoxStyle(CheckBoxStyle.Pushing);
-
-        container.ControlAdd(checkBox).SetGrid(3, 1);
-    }
-
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <CheckBox text="Apple" triple></CheckBox>
+                <CheckBox
+                    text="Apple"
+                    triple
+                    style={{ visualStyle: CheckBoxStyle.Pushing }}
+                ></CheckBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -154,16 +181,9 @@ Mixed status:
 
 #### API {#api-style}
 
-```ts {9}
-export interface ICheckBox extends IControl {
-    SetTriple(enableTriple: boolean): CheckBox;
-    GetTriple(): boolean;
-}
-
-export enum CheckValue {
-    Unchecked,
-    Checked,
-    Mixed,
+```ts
+export interface ICheckBoxComponentProps extends IComponentProps {
+    triple?: boolean;
 }
 ```
 
@@ -175,19 +195,18 @@ In this practice, we will implement select-all: [Ant Design: CheckBox](https://a
 
 ### Text Color {#example-text-color}
 
-```ts {7,8}
-import { Window, CheckBox, Vec4 } from 'ave-ui';
-
-export function main(window: Window) {
-    const checkBox = new CheckBox(window);
-    checkBox.SetText('Apple');
-
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    checkBox.SetTextColor(lightBlue);
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(checkBox).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <CheckBox
+                    text="Apple"
+                    style={{ color: new Vec4(0, 146, 255, 255 * 0.75) }}
+                ></CheckBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -196,10 +215,12 @@ export function main(window: Window) {
 #### API {#api-text-color}
 
 ```ts
-export interface ICheckBox extends IControl {}
-export interface IControl {
-    SetTextColor(color: Vec4): IControl;
-    GetTextColor(): Vec4;
+export interface ICheckBoxComponentProps extends IComponentProps {
+    style?: ICheckBoxStyle;
+}
+
+export interface ICheckBoxStyle extends IComponentStyle {
+    color?: Vec4;
 }
 ```
 
@@ -209,123 +230,113 @@ export interface IControl {
 
 > [Practice description](#practice-select-all)
 
-```ts
-import { Window, CheckBox, Grid, CheckValue } from 'ave-ui';
+```tsx
+export function App() {
+    const options = ['React', 'Vue', 'Svelte'];
+    const [checkedSet, setCheckedSet] = useState(new Set<string>());
+    const [valueCheckAll, setValueCheckAll] = useState(CheckValue.Unchecked);
 
-export function main(window: Window) {
-    const container = getControlDemoContainer(window);
-
-    //
-    let useAllCheckbox: CheckBox = null;
-
-    //
-    const checkBoxes: CheckBox[] = [];
-    const updateCheckBoxes = (checkAll: boolean) => {
-        checkBoxes.forEach((each) =>
-            each.SetValue(checkAll ? CheckValue.Checked : CheckValue.Unchecked),
-        );
-    };
-
-    //
-    const currentChecked: Set<string> = new Set();
-    const updateCurrentChecked = (name: string, checked: boolean) => {
-        if (checked) {
-            currentChecked.add(name);
-        } else {
-            currentChecked.delete(name);
-        }
-
-        if (currentChecked.size === 0) {
-            useAllCheckbox.SetValue(CheckValue.Unchecked);
-        } else if (currentChecked.size === checkBoxes.length) {
-            useAllCheckbox.SetValue(CheckValue.Checked);
-        } else {
-            useAllCheckbox.SetValue(CheckValue.Mixed);
-        }
-    };
-
-    //
-    const checkBoxCallback = (sender: CheckBox) => {
+    const onCheck: ICheckBoxComponentProps['onCheck'] = (sender) => {
+        const text = sender.GetText();
         const checkValue = sender.GetValue();
-        updateCurrentChecked(
-            sender.GetText(),
-            checkValue === CheckValue.Checked,
-        );
+        const clone = new Set(checkedSet);
+
+        if (checkValue === CheckValue.Checked) {
+            clone.add(text);
+        } else if (checkValue === CheckValue.Unchecked) {
+            clone.delete(text);
+        }
+
+        setCheckedSet(clone);
     };
 
-    //
-    {
-        const checkBox = new CheckBox(window);
-        useAllCheckbox = checkBox;
+    const onCheckingAll: ICheckBoxComponentProps['onChecking'] = (sender) => {
+        const next = sender.GetNextValue();
+        if (
+            valueCheckAll === CheckValue.Unchecked &&
+            next === CheckValue.Checked
+        ) {
+            setCheckedSet(new Set(options));
+        } else if (
+            valueCheckAll === CheckValue.Checked &&
+            next === CheckValue.Mixed
+        ) {
+            setCheckedSet(new Set());
+        } else if (
+            valueCheckAll === CheckValue.Mixed &&
+            next === CheckValue.Unchecked
+        ) {
+            setCheckedSet(new Set(options));
+        }
 
-        checkBox.SetText('Use all');
-        checkBox.SetTriple(true);
-        checkBox.OnChecking((sender: CheckBox) => {
-            const current = sender.GetValue();
-            console.log('current', current);
-            console.log('next', sender.GetNextValue());
+        return false;
+    };
 
-            if (current === CheckValue.Unchecked) {
-                updateCheckBoxes(true);
-                return true;
-            } else if (current === CheckValue.Checked) {
-                checkBox.SetValue(CheckValue.Unchecked);
-                updateCheckBoxes(false);
-                return false;
-            } else if (current === CheckValue.Mixed) {
-                checkBox.SetValue(CheckValue.Checked);
-                updateCheckBoxes(true);
-                return false;
-            }
-        });
+    useEffect(() => {
+        if (checkedSet.size === options.length) {
+            setValueCheckAll(CheckValue.Checked);
+        } else if (checkedSet.size === 0) {
+            setValueCheckAll(CheckValue.Unchecked);
+        } else {
+            setValueCheckAll(CheckValue.Mixed);
+        }
+    }, [checkedSet]);
 
-        container.ControlAdd(checkBox).SetGrid(1, 1);
-    }
-
-    {
-        const checkBox = new CheckBox(window);
-        checkBoxes.push(checkBox);
-
-        checkBox.SetText('React');
-        checkBox.OnCheck(checkBoxCallback);
-
-        container.ControlAdd(checkBox).SetGrid(1, 2);
-    }
-
-    {
-        const checkBox = new CheckBox(window);
-        checkBoxes.push(checkBox);
-
-        checkBox.SetText('Vue');
-        checkBox.OnCheck(checkBoxCallback);
-
-        container.ControlAdd(checkBox).SetGrid(2, 2);
-    }
-
-    {
-        const checkBox = new CheckBox(window);
-        checkBoxes.push(checkBox);
-
-        checkBox.SetText('Svelte');
-        checkBox.OnCheck(checkBoxCallback);
-
-        container.ControlAdd(checkBox).SetGrid(3, 2);
-    }
-
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout>
+                <CheckBox
+                    text="Use all"
+                    triple
+                    value={valueCheckAll}
+                    onChecking={onCheckingAll}
+                ></CheckBox>
+                {...options.map((each) => (
+                    <CheckBox
+                        key={each}
+                        text={each}
+                        onCheck={onCheck}
+                        value={
+                            checkedSet.has(each)
+                                ? CheckValue.Checked
+                                : CheckValue.Unchecked
+                        }
+                    ></CheckBox>
+                ))}
+            </DemoLayout>
+        </Window>
+    );
 }
 
-function getControlDemoContainer(window: Window, count = 1) {
-    const container = new Grid(window);
-    container.ColAddSlice(1);
-    container.ColAddDpx(...Array.from<number>({ length: count }).fill(120));
-    container.ColAddDpx(...Array.from<number>({ length: count }).fill(120));
-    container.ColAddSlice(1);
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
 
-    container.RowAddSlice(1);
-    container.RowAddDpx(...Array.from<number>({ length: count }).fill(32));
-    container.RowAddDpx(...Array.from<number>({ length: count }).fill(32));
-    container.RowAddSlice(1);
-    return container;
+function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '120dpx';
+    const height = props?.height ?? '32dpx';
+
+    const demoLayout = {
+        columns: `1 ${width} ${width} ${width} 1`,
+        rows: `1 ${height} ${height} 1`,
+        areas: {
+            useAll: { row: 1, column: 1 },
+            react: { row: 2, column: 1 },
+            vue: { row: 2, column: 2 },
+            svelte: { row: 2, column: 3 },
+        },
+    };
+    const [useAll, react, vue, svelte] = props.children;
+
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.useAll }}>{useAll}</Grid>
+            <Grid style={{ area: demoLayout.areas.react }}>{react}</Grid>
+            <Grid style={{ area: demoLayout.areas.vue }}>{vue}</Grid>
+            <Grid style={{ area: demoLayout.areas.svelte }}>{svelte}</Grid>
+        </Grid>
+    );
 }
 ```
