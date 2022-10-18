@@ -181,7 +181,7 @@ Mixed status:
 
 #### API {#api-style}
 
-```ts {9}
+```ts
 export interface ICheckBoxComponentProps extends IComponentProps {
     triple?: boolean;
 }
