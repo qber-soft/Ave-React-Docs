@@ -11,23 +11,24 @@ TODO：以后添加对滚动条的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {5-8}
-import { Window, ScrollBar } from 'ave-ui';
-
-export function main(window: Window) {
-    const scrollBar = new ScrollBar(window);
-    scrollBar.SetMinimum(0).SetMaximum(100).SetValue(50).SetShrink(false);
-    scrollBar.OnScrolling((sender: ScrollBar) => {
-        console.log(sender.GetValue());
-    });
-
-    const container = getControlDemoContainer(window, 2, 120, 16);
-    container.ControlAdd(scrollBar).SetGrid(1, 1, 2, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="240dpx" height="16dpx">
+                <ScrollBar
+                    value={50}
+                    onScrolling={(sender) => {
+                        console.log(sender.GetValue());
+                    }}
+                ></ScrollBar>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
-在这个例子中，我们演示了滚动条的基本用法：设置它的上下限（`0 ~ 100`）与当前值（`50`），拖动滑块，通过设置的回调获取变化的当前位置的值：
+在这个例子中，我们演示了滚动条的基本用法：设置当前值（`50`），拖动滑块，通过设置的回调获取变化的当前位置的值：
 
 ![scroll bar basic](./assets/scroll-bar-basic.gif)
 
@@ -49,26 +50,34 @@ export function main(window: Window) {
 34
 ```
 
-另外，在这个例子中，我们设置了`shrink`为`false`，它的作用是使得滚动条大小不变，当设置为`true`时，效果如下：
+另外，在这个例子中，`shrink`默认为`false`，它的作用是使得滚动条大小不变，当设置为`true`时，效果如下：
+
+```tsx {7}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="240dpx" height="16dpx">
+                <ScrollBar
+                    value={50}
+                    shrink
+                    onScrolling={(sender) => {
+                        console.log(sender.GetValue());
+                    }}
+                ></ScrollBar>
+            </DemoLayout>
+        </Window>
+    );
+}
+```
 
 ![scroll bar shrink](./assets/scroll-bar-shrink.gif)
 
 #### API {#api-basic}
 
 ```ts
-export interface IScrollBar extends IControl {
-    SetMinimum(min: number): ScrollBar;
-    GetMinimum(): number;
-
-    SetMaximum(max: number): ScrollBar;
-    GetMaximum(): number;
-
-    SetValue(value: number): ScrollBar;
-    GetValue(): number;
-
-    SetShrink(shrink: boolean): ScrollBar;
-    GetShrink(): boolean;
-
-    OnScrolling(callback: (sender: ScrollBar) => void): ScrollBar;
+export interface IScrollBarComponentProps extends IComponentProps {
+    value: number;
+    shrink?: boolean;
+    onScrolling?: Parameters<IScrollBar['OnScrolling']>[0];
 }
 ```
