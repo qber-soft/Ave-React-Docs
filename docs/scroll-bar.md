@@ -7,19 +7,20 @@ title: ScrollBar
 
 ### Basic {#example-basic}
 
-```ts {5-8}
-import { Window, ScrollBar } from 'ave-ui';
-
-export function main(window: Window) {
-    const scrollBar = new ScrollBar(window);
-    scrollBar.SetMinimum(0).SetMaximum(100).SetValue(50).SetShrink(false);
-    scrollBar.OnScrolling((sender: ScrollBar) => {
-        console.log(sender.GetValue());
-    });
-
-    const container = getControlDemoContainer(window, 2, 120, 16);
-    container.ControlAdd(scrollBar).SetGrid(1, 1, 2, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="240dpx" height="16dpx">
+                <ScrollBar
+                    value={50}
+                    onScrolling={(sender) => {
+                        console.log(sender.GetValue());
+                    }}
+                ></ScrollBar>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -47,26 +48,34 @@ Log in console:
 34
 ```
 
-In the above example, we set `shrink` to `false`, which gives us a fixed size scroll bar. To be dynamically sized, set it to `true`:
+In the above example, by default `shrink` is `false`, which gives us a fixed size scroll bar. To be dynamically sized, set it to `true`:
+
+```tsx {7}
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="240dpx" height="16dpx">
+                <ScrollBar
+                    value={50}
+                    shrink
+                    onScrolling={(sender) => {
+                        console.log(sender.GetValue());
+                    }}
+                ></ScrollBar>
+            </DemoLayout>
+        </Window>
+    );
+}
+```
 
 ![scroll bar shrink](./assets/scroll-bar-shrink.gif)
 
 #### API {#api-basic}
 
 ```ts
-export interface IScrollBar extends IControl {
-    SetMinimum(min: number): ScrollBar;
-    GetMinimum(): number;
-
-    SetMaximum(max: number): ScrollBar;
-    GetMaximum(): number;
-
-    SetValue(value: number): ScrollBar;
-    GetValue(): number;
-
-    SetShrink(shrink: boolean): ScrollBar;
-    GetShrink(): boolean;
-
-    OnScrolling(callback: (sender: ScrollBar) => void): ScrollBar;
+export interface IScrollBarComponentProps extends IComponentProps {
+    value: number;
+    shrink?: boolean;
+    onScrolling?: Parameters<IScrollBar['OnScrolling']>[0];
 }
 ```
