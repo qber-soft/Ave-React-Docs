@@ -32,7 +32,7 @@ module.exports = {
                     collapsed: false,
                     items: ['message-box', 'input', 'color-picker'],
                 },
-                // 'scroll-bar',
+                'scroll-bar',
                 // 'status-bar',
                 // 'calendar',
                 // 'date-picker',
