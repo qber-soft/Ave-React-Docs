@@ -14,7 +14,8 @@ title: 组件总览
 <!-- [examples/unit](https://github.com/qber-soft/Ave-Nodejs/tree/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit)。 -->
 
 ## 概览 {#overview}
-<!-- 
+
+<!--
 ### 基础 {#fundamental}
 
 <div style={{display:"flex"}}>
@@ -121,7 +122,7 @@ title: 组件总览
 <div style={{display:"flex", marginTop: 30}}>
     <a href="/hyper-link" style={{display:"flex", flexDirection:"column", alignItems: "center"}}>
         <img src={require('./assets/hyper-link-basic.gif').default} style={{width: 600}}/>
-        <div style={{marginTop: 10}}>HyperLink 超链接</div>
+        <div style={{marginTop: 10}}>Hyperlink 超链接</div>
     </a>
      <a href="/tab" style={{display:"flex", flexDirection:"column", alignItems: "center", marginLeft: 20}}>
         <img src={require('./assets/tab-set-content.gif').default} style={{width: 600}}/>
