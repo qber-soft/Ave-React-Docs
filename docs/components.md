@@ -117,7 +117,7 @@ This part is about components, APIs are associated with examples.
 <div style={{display:"flex", marginTop: 30}}>
     <a href="/hyper-link" style={{display:"flex", flexDirection:"column", alignItems: "center"}}>
         <img src={require('./assets/hyper-link-basic.gif').default} style={{width: 600}}/>
-        <div style={{marginTop: 10}}>HyperLink</div>
+        <div style={{marginTop: 10}}>Hyperlink</div>
     </a>
      <a href="/tab" style={{display:"flex", flexDirection:"column", alignItems: "center", marginLeft: 20}}>
         <img src={require('./assets/tab-set-content.gif').default} style={{width: 600}}/>

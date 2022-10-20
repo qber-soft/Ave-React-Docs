@@ -37,7 +37,7 @@ module.exports = {
                 // 'calendar',
                 // 'date-picker',
                 // 'knob',
-                // 'hyper-link',
+                'hyperlink',
                 // 'tab',
                 // 'radio-box',
                 // 'track-bar',

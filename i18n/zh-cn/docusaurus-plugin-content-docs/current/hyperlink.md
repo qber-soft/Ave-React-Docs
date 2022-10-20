@@ -1,6 +1,6 @@
 ---
-id: hyper-link
-title: HyperLink 超链接
+id: hyperlink
+title: Hyperlink 超链接
 ---
 
 <!-- ## 简介 {#introduction}
@@ -18,7 +18,7 @@ export function main(window: Window) {
     const hyperLink = new Hyperlink(window);
     hyperLink.SetText(`<https://github.com/>`);
     hyperLink.OnClick((sender, id) => {
-        console.log('hyper link clicked');
+        console.log('hyperlink clicked');
     });
 
     const container = getControlDemoContainer(window);
