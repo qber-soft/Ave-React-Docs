@@ -11,40 +11,39 @@ TODO：以后添加对超链接的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {5-8}
-import { Window, Hyperlink } from 'ave-ui';
-
-export function main(window: Window) {
-    const hyperLink = new Hyperlink(window);
-    hyperLink.SetText(`<https://github.com/>`);
-    hyperLink.OnClick((sender, id) => {
-        console.log('hyperlink clicked');
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(hyperLink).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout>
+                <Hyperlink
+                    text="<https://github.com/>"
+                    onClick={() => {
+                        console.log('hyperlink clicked');
+                    }}
+                />
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
 在这个例子中，我们演示了超链接的基本用法，通常就是一个网络链接，点击它会跳转到对应网页。当然，在例子中我们只是简单输出了 log。
 
-![hyper link basic](./assets/hyper-link-basic.gif)
+![hyperlink basic](./assets/hyperlink-basic.gif)
 
 控制台中有这样的输出：
 
 ```bash
-hyper link clicked
+hyperlink clicked
 ```
 
 #### API {#api-basic}
 
 ```ts
-export interface IHyperlink extends IControl {
+export interface IHyperlinkComponentProps extends IComponentProps {
     // text的格式: 超链接内容需要包裹在<>之中，如<https://github.com/>
-    SetText(text: string): Hyperlink;
-    GetText(): string;
-
-    OnClick(callback: (sender: Hyperlink, id: number) => void): Hyperlink;
+    text: string;
+    onClick?: Parameters<IHyperlink['OnClick']>[0];
 }
 ```
