@@ -7,21 +7,21 @@ title: Knob
 
 ### Basic {#example-basic}
 
-```ts {5,7,8-10}
-import { Window, Knob, Vec4 } from 'ave-ui';
-
-export function main(window: Window) {
-    const knob = new Knob(window);
-    knob.SetText('volume');
-    const lightBlue = new Vec4(0, 146, 255, 255 * 0.75);
-    knob.RingSetColor(lightBlue);
-    knob.OnChange((sender) => {
-        console.log(`value: ${sender.ValueGet()}`);
-    });
-
-    const container = getControlDemoContainer(window, 1, 80, 80);
-    container.ControlAdd(knob).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout height="80dpx">
+                <Knob
+                    text="volume"
+                    style={{ ringColor: new Vec4(0, 146, 255, 255 * 0.75) }}
+                    onChange={(sender) => {
+                        console.log(`value: ${sender.ValueGet()}`);
+                    }}
+                ></Knob>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -43,13 +43,13 @@ Note: The value range is [0,1].
 #### API {#api-basic}
 
 ```ts
-export interface IKnob extends IControl {
-    SetText(text: string): Knob;
-    GetText(): string;
+export interface IKnobComponentProps extends IComponentProps {
+    text: string;
+    style?: IKnobStyle;
+    onChange?: Parameters<IKnob['OnChange']>[0];
+}
 
-    RingSetColor(color: Vec4): Knob;
-    RingGetColor(): Vec4;
-
-    OnChange(callback: (sender: Knob) => void): Knob;
+export interface IKnobStyle extends IComponentStyle {
+    ringColor?: Vec4;
 }
 ```
