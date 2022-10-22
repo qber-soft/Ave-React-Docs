@@ -39,7 +39,7 @@ module.exports = {
                 'knob',
                 'hyperlink',
                 // 'tab',
-                // 'radio-box',
+                'radio-box',
                 // 'track-bar',
                 // 'tree',
                 'image',
