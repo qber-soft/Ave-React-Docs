@@ -7,18 +7,21 @@ title: TrackBar
 
 ### Basic {#example-basic}
 
-```ts {4-7}
-import { Window, TrackBar } from 'ave-ui';
-
-export function main(window: Window) {
-    const trackBar = new TrackBar(window);
-    trackBar.OnThumbRelease((sender) => {
-        console.log(`on thumb release, current value: ${sender.GetValue()}`);
-    });
-
-    const container = getControlDemoContainer(window, 1, 500, 25);
-    container.ControlAdd(trackBar).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="500dpx" height="25dpx">
+                <TrackBar
+                    onThumbRelease={(sender) => {
+                        console.log(
+                            `on thumb release, current value: ${sender.GetValue()}`,
+                        );
+                    }}
+                ></TrackBar>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -42,12 +45,7 @@ on thumb release, current value: 100
 #### API {#api-basic}
 
 ```ts
-export interface ITrackBar extends IControl {
-    // range is [0,100]
-    GetValue(): number;
-    SetValue(nValue: number): TrackBar;
-
-    //
-    OnThumbRelease(fn: (sender: TrackBar) => void): TrackBar;
+export interface ITrackBarComponentProps extends IComponentProps {
+    onThumbRelease?: Parameters<ITrackBar['OnThumbRelease']>[0];
 }
 ```
