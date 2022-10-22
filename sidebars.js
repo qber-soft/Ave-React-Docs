@@ -40,7 +40,7 @@ module.exports = {
                 'hyperlink',
                 // 'tab',
                 'radio-box',
-                // 'track-bar',
+                'track-bar',
                 // 'tree',
                 'image',
                 // 'icon',
