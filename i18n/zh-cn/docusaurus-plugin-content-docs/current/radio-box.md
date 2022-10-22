@@ -11,26 +11,67 @@ TODO：以后添加对单选框的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {4-5,13}
-import { Window, RadioBox } from 'ave-ui';
+```tsx
+export function App() {
+    const [valueA, setValueA] = useState(false);
+    const [valueB, setValueB] = useState(false);
 
-export function main(window: Window) {
-    const radioBoxA = new RadioBox(window);
-    radioBoxA.SetText('Option A');
+    const onCheck: IRadioBoxComponentProps['onCheck'] = (sender) => {
+        const option = sender.GetText();
+        console.log(`${option} onCheck`);
 
-    const radioBoxB = new RadioBox(window);
-    radioBoxB.SetText('Option B');
-
-    const handleCheck: Parameters<typeof RadioBox.OnCheck>[0] = (sender) => {
-        console.log(`${sender.GetText()} onCheck`);
+        if (option === 'Option A') {
+            setValueA(!valueA);
+            setValueB(false);
+        } else if (option === 'Option B') {
+            setValueB(!valueB);
+            setValueA(false);
+        }
     };
-    radioBoxA.OnCheck(handleCheck);
-    radioBoxB.OnCheck(handleCheck);
 
-    const container = getControlDemoContainer(window, 2);
-    container.ControlAdd(radioBoxA).SetGrid(1, 1);
-    container.ControlAdd(radioBoxB).SetGrid(2, 1);
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout>
+                <RadioBox
+                    text="Option A"
+                    onCheck={onCheck}
+                    value={valueA}
+                ></RadioBox>
+                <RadioBox
+                    text="Option B"
+                    onCheck={onCheck}
+                    value={valueB}
+                ></RadioBox>
+            </DemoLayout>
+        </Window>
+    );
+}
+
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
+
+function DemoLayout(props: IDemoLayoutProps) {
+    const width = props?.width ?? '120dpx';
+    const height = props?.height ?? '32dpx';
+
+    const demoLayout = {
+        columns: `1 ${width} ${width} 1`,
+        rows: `1 ${height} 1`,
+        areas: {
+            left: { row: 1, column: 1 },
+            right: { row: 1, column: 2 },
+        },
+    };
+    const [left, right] = props.children;
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.left }}>{left}</Grid>
+            <Grid style={{ area: demoLayout.areas.right }}>{right}</Grid>
+        </Grid>
+    );
 }
 ```
 
@@ -49,16 +90,9 @@ Option A onCheck
 #### API {#api-basic}
 
 ```ts
-export interface IRadioBox extends IControl {
-    // 设置选项显示的文本
-    SetText(text: string): RadioBox;
-    GetText(): string;
-
-    // 设置选项状态：选中状态/非选中状态
-    SetValue(value: boolean): RadioBox;
-    GetValue(): boolean;
-
-    // 设置一个回调，它会在选项被选中时调用
-    OnCheck(fn: (sender: RadioBox) => void): RadioBox;
+export interface IRadioBoxComponentProps extends IComponentProps {
+    text: string;
+    value?: boolean;
+    onCheck?: Parameters<IRadioBox['OnCheck']>[0];
 }
 ```
