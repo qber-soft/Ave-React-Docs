@@ -35,7 +35,7 @@ module.exports = {
                 'scroll-bar',
                 // 'status-bar',
                 // 'calendar',
-                // 'date-picker',
+                'date-picker',
                 'knob',
                 'hyperlink',
                 // 'tab',
