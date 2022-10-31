@@ -11,21 +11,22 @@ TODO：以后添加对日期选择器的整体介绍。 -->
 
 ### 基本用法 {#example-basic}
 
-```ts {5-8}
-import { Window, DatePicker } from 'ave-ui';
-
-export function main(window: Window) {
-    const datePicker = new DatePicker(window);
-    datePicker.OnChange((sender) => {
-        const timePoint = sender.GetDate();
-        console.log(
-            `Date: ${timePoint.Year}-${timePoint.Month}-${timePoint.Day}`,
-        );
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(datePicker).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="250dpx">
+                <DatePicker
+                    onChange={(sender) => {
+                        const timePoint = sender.GetDate();
+                        console.log(
+                            `Date: ${timePoint.Year}-${timePoint.Month}-${timePoint.Day}`,
+                        );
+                    }}
+                ></DatePicker>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -43,9 +44,8 @@ Date: 2021-11-4
 #### API {#api-basic}
 
 ```ts
-export interface IDatePicker extends IControl {
-    GetDate(): TimePoint;
-    OnChange(callback: (sender: DatePicker) => void): DatePicker;
+export interface IDatePickerComponentProps extends IComponentProps {
+    onChange?: Parameters<IDatePicker['OnChange']>[0];
 }
 ```
 
@@ -53,23 +53,27 @@ export interface IDatePicker extends IControl {
 
 设置日期与[日历](./calendar#example-set)中类似：
 
-```ts {10-11}
-import { Window, DatePicker } from 'ave-ui';
+```tsx
+export function App() {
+    const [date, setDate] = useState(Date.now());
+    const [dateMark, setDateMark] = useState(Date.now());
 
-export function main(window: Window) {
-    const datePicker = new DatePicker(window);
-    datePicker.OnChange((sender) => {
-        const timePoint = sender.GetDate();
-        console.log(
-            `Date: ${timePoint.Year}-${timePoint.Month}-${timePoint.Day}`,
-        );
-        datePicker.SetDate(timePoint);
-        datePicker.SetDateMark(timePoint);
-    });
-
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(datePicker).SetGrid(1, 1);
-    window.SetContent(container);
+    return (
+        <Window title="DatePicker Set">
+            <DemoLayout width="250dpx">
+                <DatePicker
+                    date={date}
+                    dateMark={dateMark}
+                    onChange={(sender) => {
+                        const timePoint = sender.GetDate();
+                        const timestamp = timePoint.JsDateTime;
+                        setDate(timestamp);
+                        setDateMark(timestamp);
+                    }}
+                ></DatePicker>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -80,11 +84,8 @@ export function main(window: Window) {
 #### API {#api-set}
 
 ```ts
-export interface IDatePicker extends IControl {
-    SetDate(timePoint: TimePoint): DatePicker;
-    GetDate(): TimePoint;
-
-    SetDateMark(timePoint: TimePoint): DatePicker;
-    GetDateMark(): TimePoint;
+export interface IDatePickerComponentProps extends IComponentProps {
+    date?: number;
+    dateMark?: number;
 }
 ```
