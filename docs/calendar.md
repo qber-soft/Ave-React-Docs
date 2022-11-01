@@ -7,21 +7,22 @@ title: Calendar
 
 ### Basic {#example-basic}
 
-```ts {5-8}
-import { Window, Calendar } from 'ave-ui';
-
-export function main(window: Window) {
-    const calendar = new Calendar(window);
-    calendar.OnChange((sender) => {
-        const timePoint = sender.GetDate();
-        console.log(
-            `Date: ${timePoint.Year}-${timePoint.Month}-${timePoint.Day}`,
-        );
-    });
-
-    const container = getControlDemoContainer(window, 1, 500, 500);
-    container.ControlAdd(calendar).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="500dpx" height="500dpx">
+                <Calendar
+                    onChange={(sender) => {
+                        const timePoint = sender.GetDate();
+                        console.log(
+                            `Date: ${timePoint.Year}-${timePoint.Month}-${timePoint.Day}`,
+                        );
+                    }}
+                ></Calendar>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -42,33 +43,36 @@ Date: 2022-3-30
 #### API {#api-basic}
 
 ```ts
-export interface ICalendar extends IControl {
-    GetDate(): TimePoint;
-    OnChange(callback: (sender: Calendar) => void): Calendar;
-}
-
-export class TimePoint {
-    get Year(): number;
-    get Month(): number;
-    get Day(): number;
+export interface ICalendarComponentProps extends IComponentProps {
+    onChange?: Parameters<ICalendar['OnChange']>[0];
 }
 ```
 
 ### Set Date {#example-set}
 
-By default, current date will be highlighted when you open it, we can customize selected date using `SetDate` and `SetDateMark`.
+By default, current date will be highlighted when you open it, we can customize selected date using `date` and `dateMark`.
 
-```ts {5-6}
-import { Window, Calendar, TimePoint } from 'ave-ui';
+```tsx
+export function App() {
+    const [date, setDate] = useState(new Date(2021, 11, 5).getTime());
+    const [dateMark, setDateMark] = useState(new Date(2021, 11, 5).getTime());
 
-export function main(window: Window) {
-    const calendar = new Calendar(window);
-    calendar.SetDate(new TimePoint(2021, 11, 5));
-    calendar.SetDateMark(new TimePoint(2021, 11, 5));
-
-    const container = getControlDemoContainer(window, 1, 500, 500);
-    container.ControlAdd(calendar).SetGrid(1, 1);
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout width="500dpx" height="500dpx">
+                <Calendar
+                    date={date}
+                    dateMark={dateMark}
+                    onChange={(sender) => {
+                        const timePoint = sender.GetDate();
+                        const timestamp = timePoint.JsDateTime;
+                        setDate(timestamp);
+                        setDateMark(timestamp);
+                    }}
+                ></Calendar>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -76,14 +80,14 @@ In this example, we set date to `2021/11/5`:
 
 ![calendar set](./assets/calendar-set.png)
 
--   `SetDate`: outline
--   `SetDateMark`: filled background
+-   `date`: outline
+-   `dateMark`: filled background
 
 The differences between them can be seen from this example:
 
 ```diff
--calendar.SetDate(new TimePoint(2021, 11, 5));
-+calendar.SetDate(new TimePoint(2021, 11, 6));
+-const [date, setDate] = useState(new Date(2021, 11, 5).getTime());
++const [date, setDate] = useState(new Date(2021, 11, 6).getTime());
 ```
 
 ![calendar set 2](./assets/calendar-set-2.png)
@@ -91,11 +95,8 @@ The differences between them can be seen from this example:
 #### API {#api-set}
 
 ```ts
-export interface ICalendar extends IControl {
-    SetDate(timePoint: TimePoint): Calendar;
-    GetDate(): TimePoint;
-
-    SetDateMark(timePoint: TimePoint): Calendar;
-    GetDateMark(): TimePoint;
+export interface ICalendarComponentProps extends IComponentProps {
+    date?: number;
+    dateMark?: number;
 }
 ```
