@@ -7,21 +7,20 @@ title: ListBox 列表框
 
 ### 基本用法 {#example-basic}
 
-```ts {5-10}
-import { Window, ListBox } from 'ave-ui';
-
-export function main(window: Window) {
-    const listBox = new ListBox(window);
-    listBox.Append('a');
-    listBox.Append('b');
-    listBox.Append('c');
-    listBox.OnSelectionEnd((sender) => {
-        console.log(sender.GetSelection());
-    });
-
-    const container = getControlDemoContainer(window, 1, 200, 300);
-    container.ControlAdd(listBox).SetGrid(1, 1);
-    window.SetContent(container);
+```tsx
+export function App() {
+    return (
+        <Window>
+            <DemoLayout width="200dpx" height="300dpx">
+                <ListBox
+                    items={['a', 'b', 'c']}
+                    onSelectionEnd={(sender) => {
+                        console.log(sender.GetSelection());
+                    }}
+                ></ListBox>
+            </DemoLayout>
+        </Window>
+    );
 }
 ```
 
@@ -40,9 +39,8 @@ export function main(window: Window) {
 #### API {#api-basic}
 
 ```ts
-export interface IKnob extends IControl {
-    Append(text: string): ListBox;
-    OnSelectionEnd(callback: (sender: ListBox) => void): ListBox;
-    GetSelection(): number;
+export interface IListBoxComponentProps extends IComponentProps {
+    items?: string[];
+    onSelectionEnd?: Parameters<IListBox['OnSelectionEnd']>[0];
 }
 ```
