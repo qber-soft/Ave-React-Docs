@@ -22,7 +22,7 @@ module.exports = {
                 'combo-box',
                 'label',
                 'text-box',
-                // 'list-box',
+                'list-box',
                 // 'rich-list-box',
                 'progress',
                 'check-box',
