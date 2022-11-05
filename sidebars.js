@@ -33,7 +33,7 @@ module.exports = {
                     items: ['message-box', 'input', 'color-picker'],
                 },
                 'scroll-bar',
-                // 'status-bar',
+                'status-bar',
                 'calendar',
                 'date-picker',
                 'knob',
