@@ -9,13 +9,10 @@ title: 组件总览
 
 ## 简介 {#introduction}
 
-这部分文档以各种单独例子介绍组件的使用，代码位于：
-
-<!-- [examples/unit](https://github.com/qber-soft/Ave-Nodejs/tree/main/Code/Avernakis%20Nodejs/Test-Nodejs/examples/unit)。 -->
+这部分文档以各种单独例子介绍组件的使用，代码位于：[examples](https://github.com/qber-soft/Ave-React/tree/main/src/examples)。
 
 ## 概览 {#overview}
 
-<!--
 ### 基础 {#fundamental}
 
 <div style={{display:"flex"}}>
@@ -120,8 +117,8 @@ title: 组件总览
 </div>
 
 <div style={{display:"flex", marginTop: 30}}>
-    <a href="/hyper-link" style={{display:"flex", flexDirection:"column", alignItems: "center"}}>
-        <img src={require('./assets/hyper-link-basic.gif').default} style={{width: 600}}/>
+    <a href="/hyperlink" style={{display:"flex", flexDirection:"column", alignItems: "center"}}>
+        <img src={require('./assets/hyperlink-basic.gif').default} style={{width: 600}}/>
         <div style={{marginTop: 10}}>Hyperlink 超链接</div>
     </a>
      <a href="/tab" style={{display:"flex", flexDirection:"column", alignItems: "center", marginLeft: 20}}>
@@ -146,9 +143,9 @@ title: 组件总览
         <img src={require('./assets/tree-basic.gif').default} style={{width: 600}}/>
         <div style={{marginTop: 10}}>Tree 树形控件</div>
     </a>
-     <a href="/picture" style={{display:"flex", flexDirection:"column", alignItems: "center", marginLeft: 20}}>
+     <a href="/image" style={{display:"flex", flexDirection:"column", alignItems: "center", marginLeft: 20}}>
         <img src={require('./assets/picture-basic.png').default} style={{width: 600}}/>
-        <div style={{marginTop: 10}}>Picture 图片</div>
+        <div style={{marginTop: 10}}>Image 图片</div>
     </a>
 </div>
 
@@ -163,4 +160,4 @@ title: 组件总览
         <img src={require('./assets/toggle-theme.gif').default} style={{width: 600}}/>
         <div style={{marginTop: 10}}>Theme 主题</div>
     </a>
-</div> -->
+</div>
