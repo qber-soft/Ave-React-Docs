@@ -41,7 +41,7 @@ module.exports = {
                 'tab',
                 'radio-box',
                 'track-bar',
-                // 'tree',
+                'tree',
                 'image',
                 // 'icon',
             ],
