@@ -7,37 +7,51 @@ title: StatusBar
 
 ### Basic {#example-basic}
 
-```ts {7,12-14}
-import { Window, StatusBar, DpiSize, Grid } from 'ave-ui';
+```tsx
+export function App() {
+    const parts: IStatusBarComponentProps['parts'] = [
+        { size: '120dpx', text: 'feature/status-bar', clickable: true },
+        { size: '100dpx', text: 'Git Graph', clickable: true },
+        { size: '1' },
+    ];
 
-export function main(window: Window) {
-    const statusBar = new StatusBar(window);
-
-    //
-    statusBar.SetPart([
-        DpiSize.FromPixelScaled(100),
-        DpiSize.FromPixelScaled(100),
-        DpiSize.FromSlice(1),
-    ]);
-    statusBar.SetText(0, 'feature/status-bar').SetClickable(0, true);
-    statusBar.SetText(1, 'Git Graph').SetClickable(1, true);
-    statusBar.OnClick((sender, index) => {
-        console.log(`index: ${index}`);
-    });
-
-    //
-    const container = getControlDemoContainer(window);
-    container.ControlAdd(statusBar).SetGrid(0, 1);
-    window.SetContent(container);
+    return (
+        <Window>
+            <DemoLayout>
+                <StatusBar
+                    parts={parts}
+                    onClick={(sender, index) => {
+                        console.log(`index: ${index}`);
+                    }}
+                ></StatusBar>
+            </DemoLayout>
+        </Window>
+    );
 }
 
-export function getControlDemoContainer(window: Window) {
-    const container = new Grid(window);
-    container.ColAddSlice(1);
+interface IDemoLayoutProps {
+    children?: any[] | any;
+    width?: string;
+    height?: string;
+}
 
-    container.RowAddSlice(1);
-    container.RowAddDpx(32);
-    return container;
+function DemoLayout(props: IDemoLayoutProps) {
+    const height = props?.height ?? '32dpx';
+
+    const demoLayout = {
+        columns: `1`,
+        rows: `1 ${height}`,
+        areas: {
+            control: { row: 1, column: 0 },
+        },
+    };
+    return (
+        <Grid style={{ layout: demoLayout }}>
+            <Grid style={{ area: demoLayout.areas.control }}>
+                {props.children}
+            </Grid>
+        </Grid>
+    );
 }
 ```
 
@@ -55,14 +69,14 @@ index: 0
 #### API {#api-basic}
 
 ```ts
-export interface IStatusBar extends IControl {
-    // set the layout of status bar: the width of each part
-    SetPart(partWidthList: DpiSize[]): StatusBar;
-    GetPart(): DpiSize[];
+export interface IStatusBarComponentProps extends IComponentProps {
+    parts: IStatusBarPart[];
+    onClick?: Parameters<IStatusBar['OnClick']>[0];
+}
 
-    SetText(index: number, text: string): StatusBar;
-    GetText(index: number): string;
-
-    OnClick(callback: (sender: StatusBar, index: number) => void): StatusBar;
+export interface IStatusBarPart {
+    size: string;
+    text?: string;
+    clickable?: boolean;
 }
 ```
