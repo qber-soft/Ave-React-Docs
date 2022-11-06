@@ -54,8 +54,9 @@ By default, current date will be highlighted when you open it, we can customize 
 
 ```tsx
 export function App() {
-    const [date, setDate] = useState(new Date(2021, 11, 5).getTime());
-    const [dateMark, setDateMark] = useState(new Date(2021, 11, 5).getTime());
+    const timestamp = new TimePoint(2021, 11, 5).JsDateTime;
+    const [date, setDate] = useState(timestamp);
+    const [dateMark, setDateMark] = useState(timestamp);
 
     return (
         <Window>
@@ -86,8 +87,8 @@ In this example, we set date to `2021/11/5`:
 The differences between them can be seen from this example:
 
 ```diff
--const [date, setDate] = useState(new Date(2021, 11, 5).getTime());
-+const [date, setDate] = useState(new Date(2021, 11, 6).getTime());
+-const timestamp = new TimePoint(2021, 11, 5).JsDateTime;
++const timestamp = new TimePoint(2021, 11, 6).JsDateTime;
 ```
 
 ![calendar set 2](./assets/calendar-set-2.png)

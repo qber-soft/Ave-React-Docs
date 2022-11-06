@@ -55,8 +55,9 @@ export interface ICalendarComponentProps extends IComponentProps {
 
 ```tsx
 export function App() {
-    const [date, setDate] = useState(new Date(2021, 11, 5).getTime());
-    const [dateMark, setDateMark] = useState(new Date(2021, 11, 5).getTime());
+    const timestamp = new TimePoint(2021, 11, 5).JsDateTime;
+    const [date, setDate] = useState(timestamp);
+    const [dateMark, setDateMark] = useState(timestamp);
 
     return (
         <Window>
@@ -86,8 +87,8 @@ export function App() {
 我们将`date`的日期改为 11 月 6 日就可以看出区别了：
 
 ```diff
--const [date, setDate] = useState(new Date(2021, 11, 5).getTime());
-+const [date, setDate] = useState(new Date(2021, 11, 6).getTime());
+-const timestamp = new TimePoint(2021, 11, 5).JsDateTime;
++const timestamp = new TimePoint(2021, 11, 6).JsDateTime;
 ```
 
 ![calendar set 2](./assets/calendar-set-2.png)
